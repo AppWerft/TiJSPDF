@@ -65,7 +65,6 @@ _tempFile = Ti.Filesystem.getFile(Ti.Filesystem.getTempDirectory(), timeStampNam
 doc.save(_tempFile);
 
 ```
-[myapp link](https://github.com/core-13/myapp)
 
 ### Community Enhancements ###
 
