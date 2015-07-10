@@ -14,12 +14,34 @@ I do not claim to be the author of the jsPDF library, this code simply adds prel
 
 0.1 Initial proof of concept
 0.2 Some tweaks provided by [Ben Bahrenburg](http://bahrenburgs.com/), some of his public work [github.com/benbahrenburg](https://github.com/benbahrenburg)
+0.3 Fix for when the PDF is viewed on some desktop systems
 
 ### Future updates ###
 
 1.0 Fully tested on iOS and Android with the generated PDFs tested on mobiles as well as desktops for compatibility. 
 
 The 1.0 version of this library will be featured in an upcoming magazine issue of the forthcoming Newsstand magazine "Oracle: Deep Dives" .  This issue will be complete with many examples of code in Alloy and classic with many tips and tricks and walkthroughs on how and why this can now be done.  This document will be updated to show availability.
+
+### addImage Method ###
+
+```javascript
+doc.addImage(filename, format, x, y, w, h, imageWidth, imageHeight, imageSize);
+/*
+    filename
+    format (always JPEG)
+    x (on page)
+    y (on page)
+    width (on page)
+    height (on page)
+    imageWidth (actual width in pxels of source image)
+    imageHeight (actual height in pxels of source image)
+    imageSize (actual size in bytes of source image)
+*/
+
+
+```
+
+### Example Code ###
 
 ```javascript
 var _jsPDF = require('./jsPDFMod/TiJSPDF');
@@ -33,7 +55,7 @@ doc.setProperties({
 });
 
 var imgSample1 = Ti.Filesystem.resourcesDirectory + 'image1.jpg';
-doc.addImage(imgSample1, 'JPEG', 10, 20, 128, 96);
+doc.addImage(imgSample1, 'JPEG', 10, 20, 128, 96, 1280, 960, 738321);
 
 doc.setFont("helvetica");
 doc.setFontType("bold");
@@ -46,7 +68,7 @@ doc.rect(20, 120, 10, 10); // empty square
 doc.rect(40, 120, 10, 10, 'F'); // filled square
 
 var imgSample2 = Ti.Filesystem.resourcesDirectory + 'image2.jpg'
-doc.addImage(imgSample2, 'JPEG', 70, 10, 100, 120);
+doc.addImage(imgSample2, 'JPEG', 70, 10, 100, 120, 410, 615, 67506);
 
 doc.setFont("helvetica");
 doc.setFontType("normal");

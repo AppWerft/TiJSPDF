@@ -1,1 +1,6 @@
-Place your change log text here.  This file will be incorporated with your app at package time.
+Version 0.1 - Nov 2013
+    Proof of Concept
+Version 0.2 - Dec 2014
+    Some tweaks provided by Ben Bahrenburg
+Version 0.3 - Jul 2015
+    Fix for when the PDF is viewed on some desktop systems

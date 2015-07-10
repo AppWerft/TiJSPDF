@@ -1,9 +1,8 @@
-#appname: jsPDF
-#appid: com.core13.jspdf
-#type: mobile
-#guid: 13f3b74d-4b91-4cc6-a504-ddf5b61a1edf
-#version: 1.0
-#publisher: not specified
-#url: not specified
+#appname: Test71-jsPDF
+#publisher: YoMWH
+#url: http://core13.co.uk/
 #image: appicon.png
-#desc: not specified
+#appid: com.core13.jspdf
+#desc: undefined
+#type: mobile
+#guid: 855a884a-13e2-4c57-80d2-8ed60c06a27c

@@ -1,4 +1,4 @@
-var _jsPDF = require('./jsPDFMod/TiJSPDF');
+var _jsPDF = require('tiPDF');
 var _isAndroid = Ti.Platform.osname === 'android';
 var _tempFile = null;
 (function () {
@@ -45,7 +45,7 @@ var _tempFile = null;
         });
 
         var imgSample1 = Ti.Filesystem.resourcesDirectory + 'image1.jpg';
-        doc.addImage(imgSample1, 'JPEG', 10, 20, 128, 96);
+        doc.addImage(imgSample1, 'JPEG', 10, 20, 128, 96, 1280, 960, 738321);
 
         doc.setFont("helvetica");
         doc.setFontType("bold");
@@ -58,7 +58,7 @@ var _tempFile = null;
         doc.rect(40, 120, 10, 10, 'F'); // filled square
 
         var imgSample2 = Ti.Filesystem.resourcesDirectory + 'image2.jpg'
-        doc.addImage(imgSample2, 'JPEG', 70, 10, 100, 120);
+        doc.addImage(imgSample2, 'JPEG', 70, 10, 100, 120, 410, 615, 67506);
 
         doc.setFont("helvetica");
         doc.setFontType("normal");
@@ -116,6 +116,15 @@ var _tempFile = null;
       
     });
     
+    win.addEventListener('click',function (e) {
+        var filename = "ss.jpeg";
+        var ss = win.toImage();
+        var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, filename);
+        Ti.API.info('ss: ' + f.nativePath);
+        f.write(ss);
+        f = null;
+        label.text = 'done';
+    });
     win.addEventListener('close',function (e) {
  		if (_tempFile != null) {
 			_tempFile.deleteFile();

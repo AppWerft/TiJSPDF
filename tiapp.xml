@@ -1,33 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
     <id>com.core13.jspdf</id>
-    <name>jsPDF</name>
+    <name>Test71-jsPDF</name>
     <version>1.0</version>
-    <publisher>MacMini1</publisher>
-    <url>http://core13.co.uk</url>
-    <description>not specified</description>
-    <copyright>2014 by MacMini1</copyright>
+    <publisher>YoMWH</publisher>
+    <url>http://core13.co.uk/</url>
+    <description>undefined</description>
+    <copyright>2015 by YoMWH</copyright>
     <icon>appicon.png</icon>
-    <persistent-wifi>false</persistent-wifi>
-    <prerendered-icon>false</prerendered-icon>
-    <statusbar-style>default</statusbar-style>
-    <statusbar-hidden>false</statusbar-hidden>
     <fullscreen>false</fullscreen>
     <navbar-hidden>false</navbar-hidden>
     <analytics>true</analytics>
-    <guid>13f3b74d-4b91-4cc6-a504-ddf5b61a1edf</guid>
+    <guid>855a884a-13e2-4c57-80d2-8ed60c06a27c</guid>
     <property name="ti.ui.defaultunit" type="string">dp</property>
-    <iphone>
-        <orientations device="iphone">
-            <orientation>Ti.UI.PORTRAIT</orientation>
-        </orientations>
-        <orientations device="ipad">
-            <orientation>Ti.UI.PORTRAIT</orientation>
-            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
-            <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
-            <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
-        </orientations>
-    </iphone>
+    <ios>
+        <plist>
+            <dict>
+                <key>UISupportedInterfaceOrientations~iphone</key>
+                <array>
+                    <string>UIInterfaceOrientationPortrait</string>
+                </array>
+                <key>UISupportedInterfaceOrientations~ipad</key>
+                <array>
+                    <string>UIInterfaceOrientationPortrait</string>
+                    <string>UIInterfaceOrientationPortraitUpsideDown</string>
+                    <string>UIInterfaceOrientationLandscapeLeft</string>
+                    <string>UIInterfaceOrientationLandscapeRight</string>
+                </array>
+                <key>UIRequiresPersistentWiFi</key>
+                <false/>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+                <key>UIStatusBarHidden</key>
+                <false/>
+                <key>UIStatusBarStyle</key>
+                <string>UIStatusBarStyleDefault</string>
+            </dict>
+        </plist>
+    </ios>
     <android xmlns:android="http://schemas.android.com/apk/res/android"/>
     <mobileweb>
         <precache/>
@@ -41,10 +51,9 @@
     <deployment-targets>
         <target device="android">true</target>
         <target device="blackberry">false</target>
-        <target device="ipad">true</target>
+        <target device="ipad">false</target>
         <target device="iphone">true</target>
         <target device="mobileweb">false</target>
-        <target device="tizen">false</target>
     </deployment-targets>
-    <sdk-version>3.1.3.GA</sdk-version>
+    <sdk-version>3.5.1.GA</sdk-version>
 </ti:app>
