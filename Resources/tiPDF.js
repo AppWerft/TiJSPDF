@@ -290,7 +290,7 @@ var Base64 = {
 		return string;
 	}
 
-}
+};
 
 /** @preserve jsPDF ( ${buildDate} ${commitID} )
 Copyright (c) 2010 James Hall, https://github.com/MrRio/jsPDF
@@ -332,7 +332,7 @@ Creates new jsPDF document object instance
 */
 
 var jsPDF = (function() {
-'use strict'
+'use strict';
 
 // this will run on <=IE9, possibly some niche browsers
 // new webkit-based, FireFox, IE10 already have native version of this.
@@ -419,18 +419,18 @@ if (typeof btoa === 'undefined') {
 		return (r ? enc.slice(0, r - 3) : enc) + '==='.slice(r || 3);
 
 		// end of base64 encoder MIT, GPL
-	}
-}
+	};
+};
 
 var getObjectLength = typeof Object.keys === 'function' ?
 	function(object){
-		return Object.keys(object).length
+		return Object.keys(object).length;
 	} :
 	function(object){
-		var i = 0
-		for (var e in object){if(object.hasOwnProperty(e)){ i++ }}
-		return i
-	}
+		var i = 0;
+		for (var e in object){if(object.hasOwnProperty(e)){ i++; }}
+		return i;
+	};
 
 /**
 PubSub implementation
@@ -438,7 +438,7 @@ PubSub implementation
 @name PubSub
 */
 var PubSub = function(context){
-	'use strict'
+	'use strict';
 	/**  @preserve 
 	-----------------------------------------------------------------------------------------------
 	JavaScript PubSub library
@@ -453,13 +453,13 @@ var PubSub = function(context){
 	@private
 	@fieldOf PubSub
 	*/
-	this.topics = {}
+	this.topics = {};
 	/**
 	Stores what will be `this` within the callback functions.
 	@private
 	@fieldOf PubSub#
 	*/
-	this.context = context
+	this.context = context;
 	/**
 	Allows caller to emit an event and pass arguments to event listeners.
 	@public
@@ -470,29 +470,29 @@ var PubSub = function(context){
 	@name publish
 	*/
 	this.publish = function(topic, args) {
-		'use strict'
+		'use strict';
 		if (this.topics[topic]) {
 			var currentTopic = this.topics[topic]
 			, args = Array.prototype.slice.call(arguments, 1)
 			, toremove = []
 			, fn
 			, i, l
-			, pair
+			, pair;
 
 			for (i = 0, l = currentTopic.length; i < l; i++) {
-				pair = currentTopic[i] // this is a [function, once_flag] array
-				fn = pair[0] 
+				pair = currentTopic[i]; // this is a [function, once_flag] array
+				fn = pair[0] ;
 				if (pair[1] /* 'run once' flag set */){
 				  pair[0] = function(){}
-				  toremove.push(i)
+				  toremove.push(i);
 				}
-			   	fn.apply(this.context, args)
+			   	fn.apply(this.context, args);
 			}
 			for (i = 0, l = toremove.length; i < l; i++) {
-			  currentTopic.splice(toremove[i], 1)
+			  currentTopic.splice(toremove[i], 1);
 			}
 		}
-	}
+	};
 	/**
 	Allows listener code to subscribe to channel and be called when data is available 
 	@public
@@ -505,7 +505,7 @@ var PubSub = function(context){
 	@name subscribe
 	*/
 	this.subscribe = function(topic, callback, once) {
-		'use strict'
+		'use strict';
 		if (!this.topics[topic]) {
 			this.topics[topic] = [[callback, once]];
 		} else {
@@ -526,16 +526,16 @@ var PubSub = function(context){
 	*/
 	this.unsubscribe = function(token) {
 		if (this.topics[token.topic]) {
-			var currentTopic = this.topics[token.topic]
+			var currentTopic = this.topics[token.topic];
 			
 			for (var i = 0, l = currentTopic.length; i < l; i++) {
 				if (currentTopic[i][0] === token.callback) {
-					currentTopic.splice(i, 1)
+					currentTopic.splice(i, 1);
 				}
 			}
 		}
-	}
-}
+	};
+};
 
 	
 /**
@@ -545,16 +545,15 @@ var PubSub = function(context){
 function jsPDF(/** String */ orientation, /** String */ unit, /** String */ format){
 
 	// Default parameter values
-	if (typeof orientation === 'undefined') orientation = 'p'
-	else orientation = orientation.toString().toLowerCase()
-	if (typeof unit === 'undefined') unit = 'mm'
-	if (typeof format === 'undefined') format = 'a4'
+	if (typeof orientation === 'undefined') orientation = 'p';
+	else orientation = orientation.toString().toLowerCase();
+	if (typeof unit === 'undefined') unit = 'mm';
+	if (typeof format === 'undefined') format = 'a4';
 
 	var format_as_string = format.toString().toLowerCase()
 	, version = '20120619'
 	, content = []
 	, content_length = 0
-
 	, pdfVersion = '1.3' // PDF Version
 	, pageFormats = { // Size in pt of various paper formats
 		'a3': [841.89, 1190.55]
@@ -586,47 +585,47 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
     , fit = 'H';
 
 	if (unit == 'pt') {
-		k = 1
+		k = 1;
 	} else if(unit == 'mm') {
-		k = 72/25.4
+		k = 72/25.4;
 	} else if(unit == 'cm') {
-		k = 72/2.54
+		k = 72/2.54;
 	} else if(unit == 'in') {
-		k = 72
+		k = 72;
 	} else {
-		throw('Invalid unit: ' + unit)
+		throw('Invalid unit: ' + unit);
 	}
 	
 	// Dimensions are stored as user units and converted to points on output
 	if (format_as_string in pageFormats) {
-		pageHeight = pageFormats[format_as_string][1] / k
-		pageWidth = pageFormats[format_as_string][0] / k
+		pageHeight = pageFormats[format_as_string][1] / k;
+		pageWidth = pageFormats[format_as_string][0] / k;
 	} else {
 		try {
-			pageHeight = format[1]
-			pageWidth = format[0]
+			pageHeight = format[1];
+			pageWidth = format[0];
 		} 
 		catch(err) {
-			throw('Invalid format: ' + format)
+			throw('Invalid format: ' + format);
 		}
 	}
 	
 	if (orientation === 'p' || orientation === 'portrait') {
-		orientation = 'p'
+		orientation = 'p';
 		if ( pageWidth > pageHeight  ) {
-			var tmp = pageWidth
-			pageWidth = pageHeight
-			pageHeight = tmp
+			var tmp = pageWidth;
+			pageWidth = pageHeight;
+			pageHeight = tmp;
 		}
 	} else if (orientation === 'l' || orientation === 'landscape') {
-		orientation = 'l'
+		orientation = 'l';
 		if ( pageHeight > pageWidth ) {
-			var tmp = pageWidth
-			pageWidth = pageHeight
-			pageHeight = tmp
+			var tmp = pageWidth;
+			pageWidth = pageHeight;
+			pageHeight = tmp;
 		}
 	} else {
-		throw('Invalid orientation: ' + orientation)
+		throw('Invalid orientation: ' + orientation);
 	}
 
 	/////////////////////
@@ -634,13 +633,10 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	/////////////////////
 	// simplified (speedier) replacement for sprintf's %.2f conversion  
 	var f2 = function(number){
-		return number.toFixed(2)
+		return number.toFixed(2);
+	}, f3 = function(number){
+		return number.toFixed(3);
 	}
-	// simplified (speedier) replacement for sprintf's %.3f conversion  
-	, f3 = function(number){
-		return number.toFixed(3)
-	}
-	// simplified (speedier) replacement for sprintf's %02d
 	, padd2 = function(number) {
 		var n = (number).toFixed(0)
 		if ( number < 10 ) return '0' + n
@@ -659,26 +655,26 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	}
 	, out = function(string) {
 		if(outToPages /* set by beginPage */) {
-			pages[page].push(string)
+			pages[page].push(string);
 		} else {
-			content.push(string)
-			content_length += string.length + 1 // +1 is for '\n' that will be used to join contents of content 
+			content.push(string);
+			content_length += string.length + 1; // +1 is for '\n' that will be used to join contents of content 
 		}
 	}
 	, newObject = function() {
 		// Begin a new object
-		objectNumber ++
-		offsets[objectNumber] = content_length
+		objectNumber ++;
+		offsets[objectNumber] = content_length;
 		out(objectNumber + ' 0 obj');		
-		return objectNumber
+		return objectNumber;
 	}
 	, putPages = function() {
-		var wPt = pageWidth * k
-		var hPt = pageHeight * k
+		var wPt = pageWidth * k;
+		var hPt = pageHeight * k;
 
 		// outToPages = false as set in endDocument(). out() writes to content.
 		
-		var n, p
+		var n, p;
 		for(n=1; n <= page; n++) {
 			newObject()
 			out('<</Type /Page')
@@ -699,20 +695,18 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		out('<</Type /Pages')
 		var kids = '/Kids ['
 		for (var i = 0; i < page; i++) {
-			kids += (3 + 2 * i) + ' 0 R '
+			kids += (3 + 2 * i) + ' 0 R ';
 		}
 		out(kids + ']')
 		out('/Count ' + page)
 		out('/MediaBox [0 0 '+f2(wPt)+' '+f2(hPt)+']')
 		out('>>')
 		out('endobj');		
-	}
-	, putStream = function(str) {
+	}, putStream = function(str) {
 		out('stream')
 		out(str)
 		out('endstream')
-	}
-	, putResources = function() {
+	}, putResources = function() {
 		putFonts()
 		events.publish('putResources')
 		// Resource dictionary
@@ -720,10 +714,9 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		out('2 0 obj')
 		out('<<')
 		putResourceDictionary()
-		out('>>')
-		out('endobj')
-	}	
-	, putFonts = function() {
+		out('>>');
+		out('endobj');
+	}, putFonts = function() {
 		for (var fontKey in fonts) {
 			if (fonts.hasOwnProperty(fontKey)) {
 				putFont(fonts[fontKey])
