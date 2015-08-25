@@ -622,7 +622,6 @@
         }
         return extended;
     }
-
 })(jsPDF.API);
 
 var Table = function () {
