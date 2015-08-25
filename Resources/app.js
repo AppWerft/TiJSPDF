@@ -1,88 +1,97 @@
 var _jsPDF = require('tiPDF');
+
 var _isAndroid = Ti.Platform.osname === 'android';
 var _tempFile = null;
-(function () {
-    var win = Ti.UI.createWindow({
-        backgroundColor: '#eee',
-        height: Ti.UI.FILL,
-        layout: 'vertical',
-        title: 'jsPDF Sample',
-        width: Ti.UI.FILL
-    });
+(function() {
+	var win = Ti.UI.createWindow({
+		backgroundColor : '#eee',
+		height : Ti.UI.FILL,
+		layout : 'vertical',
+		title : 'jsPDF Sample',
+		width : Ti.UI.FILL
+	});
 
 	var label = Ti.UI.createLabel({
-        color: '#000',
-        height: Ti.UI.SIZE,
-        left: 10,
-        right: 10,
-		text: 'Press the below button to demonstrate how to use jsPDF in Titanium. If you are using Android you will need to run this on the device to view the PDF.',
-        top: 10,
-        width: Ti.UI.FILL
+		color : '#000',
+		height : Ti.UI.SIZE,
+		left : 10,
+		right : 10,
+		text : 'Press the below button to demonstrate how to use jsPDF in Titanium. If you are using Android you will need to run this on the device to view the PDF.',
+		top : 10,
+		width : Ti.UI.FILL
 	});
 	win.add(label);
-	
-    var btn = Ti.UI.createButton({
-        font: {
-            fontSize: 14
-        },
-        height: 50,
-        title: 'Run PDF Sample',
-        left: 20,
-        right: 20,
-        top: 40,
-        width: Ti.UI.FILL
-    });
-    win.add(btn);
-    
-    btn.addEventListener('click', function (e) {
-        var doc = new _jsPDF();
-        doc.setProperties({
-            title: 'Title',
-            subject: 'This is the subject',		
-            author: 'John Doe',
-            keywords: 'one, two, three',
-            creator: 'Someone'
-        });
 
-        var imgSample1 = Ti.Filesystem.resourcesDirectory + 'image1.jpg';
-        doc.addImage(imgSample1, 'JPEG', 10, 20, 128, 96, 1280, 960, 738321);
+	var btn = Ti.UI.createButton({
+		font : {
+			fontSize : 14
+		},
+		height : 50,
+		title : 'Run PDF Sample',
+		left : 20,
+		right : 20,
+		top : 40,
+		width : Ti.UI.FILL
+	});
+	win.add(btn);
 
-        doc.setFont("helvetica");
-        doc.setFontType("bold");
-        doc.setFontSize(24);
-        doc.text(20, 180, 'Hello world');
-        doc.text(20, 190, 'This is jsPDF with image support\nusing Titanium..');
+	btn.addEventListener('click', function(e) {
 
-        doc.addPage();
-        doc.rect(20, 120, 10, 10); // empty square
-        doc.rect(40, 120, 10, 10, 'F'); // filled square
+		var columns = ["ID", "Name", "Country"];
+		var rows = [[1, "Shaw", "Tanzania"], [2, "Nelson", "Kazakhstan"], [3, "Garcia", "Madagascar"]];
 
-        var imgSample2 = Ti.Filesystem.resourcesDirectory + 'image2.jpg';
-        doc.addImage(imgSample2, 'JPEG', 70, 10, 100, 120, 410, 615, 67506);
+		var doc = new _jsPDF();
+		doc.setProperties({
+			title : 'Title',
+			subject : 'This is the subject',
+			author : 'John Doe',
+			keywords : 'one, two, three',
+			creator : 'Someone'
+		});
 
-        doc.setFont("helvetica");
-        doc.setFontType("normal");
-        doc.setFontSize(24);
-        doc.text(20, 180, 'This is what I looked like trying to get');
-        doc.text(20, 190, 'the save function into the plugin system.');
-        doc.text(20, 200, 'It works now');
+		var imgSample1 = Ti.Filesystem.resourcesDirectory + 'image1.jpg';
+		doc.addImage(imgSample1, 'JPEG', 10, 20, 128, 96, 1280, 960, 738321);
+		
+		doc.autoTable(columns, rows);
+		
+		doc.setFont("helvetica");
+		doc.setFontType("bold");
+		doc.setFontSize(24);
+		doc.text(20, 180, 'Hello world');
+		doc.text(20, 190, 'This is jsPDF with image support\nusing Titanium..');
 
-        doc.text(20, 240, (new Date()).toString());
+		doc.addPage();
+		doc.rect(20, 120, 10, 10);
+		// empty square
+		doc.rect(40, 120, 10, 10, 'F');
+		// filled square
 
-        var timeStampName = new Date().getTime();
-        if (_tempFile != null) {
-            _tempFile.deleteFile();
-        }
-        _tempFile = Ti.Filesystem.getFile(Ti.Filesystem.getTempDirectory(), timeStampName + '.pdf');			
-        doc.save(_tempFile);
-				
+		var imgSample2 = Ti.Filesystem.resourcesDirectory + 'image2.jpg';
+		doc.addImage(imgSample2, 'JPEG', 70, 10, 100, 120, 410, 615, 67506);
+
+		doc.setFont("helvetica");
+		doc.setFontType("normal");
+		doc.setFontSize(24);
+		doc.text(20, 180, 'This is what I looked like trying to get');
+		doc.text(20, 190, 'the save function into the plugin system.');
+		doc.text(20, 200, 'It works now');
+
+		doc.text(20, 240, (new Date()).toString());
+
+		var timeStampName = new Date().getTime();
+		if (_tempFile != null) {
+			_tempFile.deleteFile();
+		}
+		_tempFile = Ti.Filesystem.getFile(Ti.Filesystem.getTempDirectory(), timeStampName + '.pdf');
+		doc.save(_tempFile);
+
 		if (_isAndroid) {
 			var intent = Ti.Android.createIntent({
-				action: Ti.Android.ACTION_VIEW,
-				type: "application/pdf",
-				data: _tempFile.nativePath
+				action : Ti.Android.ACTION_VIEW,
+				type : "application/pdf",
+				data : _tempFile.nativePath
 			});
-			
+
 			try {
 				Ti.Android.currentActivity.startActivity(intent);
 			} catch(e) {
@@ -91,46 +100,50 @@ var _tempFile = null;
 			}
 		} else {
 
-            var winPDF = Ti.UI.createWindow({
-                backgroundColor: '#eee',
-                height: Ti.UI.FILL,
-                title: 'PDF Preview',
-                width: Ti.UI.FILL
-            });
-            var btnClose = Ti.UI.createButton({
-                title: 'Close'
-            });
-            btnClose.addEventListener('click', function (e) {
-                winPDF.close();
-            });
-            winPDF.setRightNavButton(btnClose);
-            var pdfview = Ti.UI.createWebView({
-                backgroundColor: '#eee',
-                url: _tempFile.nativePath,
-                height: Ti.UI.FILL,
-                width: Ti.UI.FILL
-            });
-            winPDF.add(pdfview);
-            winPDF.open({ modal:true });
+			var winPDF = Ti.UI.createWindow({
+				backgroundColor : '#eee',
+				height : Ti.UI.FILL,
+				title : 'PDF Preview',
+				width : Ti.UI.FILL
+			});
+			var btnClose = Ti.UI.createButton({
+				title : 'Close'
+			});
+			btnClose.addEventListener('click', function(e) {
+				winPDF.close();
+			});
+			winPDF.setRightNavButton(btnClose);
+			var pdfview = Ti.UI.createWebView({
+				backgroundColor : '#eee',
+				url : _tempFile.nativePath,
+				height : Ti.UI.FILL,
+				width : Ti.UI.FILL
+			});
+			winPDF.add(pdfview);
+			winPDF.open({
+				modal : true
+			});
 		}
-      
-    });
-    
-    win.addEventListener('click',function (e) {
-        var filename = "ss.jpeg";
-        var ss = win.toImage();
-        var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, filename);
-        Ti.API.info('ss: ' + f.nativePath);
-        f.write(ss);
-        f = null;
-        label.text = 'done';
-    });
-    win.addEventListener('close',function (e) {
- 		if (_tempFile != null) {
+
+	});
+
+	win.addEventListener('click', function(e) {
+		var filename = "ss.jpeg";
+		var ss = win.toImage();
+		var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, filename);
+		Ti.API.info('ss: ' + f.nativePath);
+		f.write(ss);
+		f = null;
+		label.text = 'done';
+	});
+	win.addEventListener('close', function(e) {
+		if (_tempFile != null) {
 			_tempFile.deleteFile();
 		}
 		_tempFile = null;
-    });
-    
-	win.open({modal:true});
+	});
+
+	win.open({
+		modal : true
+	});
 })();

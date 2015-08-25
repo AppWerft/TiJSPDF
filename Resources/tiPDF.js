@@ -258,17 +258,13 @@ var Base64 = {
 
 		return utftext;
 	},
-
 	// private method for UTF-8 decoding
 	_utf8_decode : function (utftext) {
 		var string = "";
 		var i = 0;
 		var c = c1 = c2 = 0;
-
 		while ( i < utftext.length ) {
-
 			c = utftext.charCodeAt(i);
-
 			if (c < 128) {
 				string += String.fromCharCode(c);
 				i++;
@@ -284,12 +280,9 @@ var Base64 = {
 				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
 				i += 3;
 			}
-
 		}
-
 		return string;
 	}
-
 };
 
 /** @preserve jsPDF ( ${buildDate} ${commitID} )
@@ -483,7 +476,7 @@ var PubSub = function(context){
 				pair = currentTopic[i]; // this is a [function, once_flag] array
 				fn = pair[0] ;
 				if (pair[1] /* 'run once' flag set */){
-				  pair[0] = function(){}
+				  pair[0] = function(){};
 				  toremove.push(i);
 				}
 			   	fn.apply(this.context, args);
@@ -638,14 +631,14 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		return number.toFixed(3);
 	}
 	, padd2 = function(number) {
-		var n = (number).toFixed(0)
-		if ( number < 10 ) return '0' + n
-		else return n
+		var n = (number).toFixed(0);
+		if ( number < 10 ) return '0' + n;
+		else return n;
 	}
 	// simplified (speedier) replacement for sprintf's %02d
 	, padd10 = function(number) {
         if (typeof (number) === 'number') {
-            var n = (number).toFixed(0)
+            var n = (number).toFixed(0);
             if (n.length < 10) {
                 return new Array( 11 - n.length ).join( '0' ) + n;
             } else {
@@ -676,70 +669,69 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		
 		var n, p;
 		for(n=1; n <= page; n++) {
-			newObject()
-			out('<</Type /Page')
+			newObject();
+			out('<</Type /Page');
 			out('/Parent 1 0 R');	
-			out('/Resources 2 0 R')
-			out('/Contents ' + (objectNumber + 1) + ' 0 R>>')
-			out('endobj')
+			out('/Resources 2 0 R');
+			out('/Contents ' + (objectNumber + 1) + ' 0 R>>');
+			out('endobj');
 			
 			// Page content
-			p = pages[n].join('\n')
-			newObject()
-			out('<</Length ' + p.length  + '>>')
-			putStream(p)
-			out('endobj')
+			p = pages[n].join('\n');
+			newObject();
+			out('<</Length ' + p.length  + '>>');
+			putStream(p);
+			out('endobj');
 		}
-		offsets[1] = content_length
-		out('1 0 obj')
-		out('<</Type /Pages')
-		var kids = '/Kids ['
+		offsets[1] = content_length;
+		out('1 0 obj');
+		out('<</Type /Pages');
+		var kids = '/Kids [';
 		for (var i = 0; i < page; i++) {
 			kids += (3 + 2 * i) + ' 0 R ';
 		}
-		out(kids + ']')
-		out('/Count ' + page)
-		out('/MediaBox [0 0 '+f2(wPt)+' '+f2(hPt)+']')
-		out('>>')
+		out(kids + ']');
+		out('/Count ' + page);
+		out('/MediaBox [0 0 '+f2(wPt)+' '+f2(hPt)+']');
+		out('>>');
 		out('endobj');		
 	}, putStream = function(str) {
-		out('stream')
-		out(str)
-		out('endstream')
+		out('stream');
+		out(str);
+		out('endstream');
 	}, putResources = function() {
-		putFonts()
-		events.publish('putResources')
+		putFonts();
+		events.publish('putResources');
 		// Resource dictionary
-		offsets[2] = content_length
-		out('2 0 obj')
-		out('<<')
-		putResourceDictionary()
+		offsets[2] = content_length;
+		out('2 0 obj');
+		out('<<');
+		putResourceDictionary();
 		out('>>');
 		out('endobj');
 	}, putFonts = function() {
 		for (var fontKey in fonts) {
 			if (fonts.hasOwnProperty(fontKey)) {
-				putFont(fonts[fontKey])
+				putFont(fonts[fontKey]);
 			}
 		}
-	}
-	, putFont = function(font) {
-		font.objectNumber = newObject()
-		out('<</BaseFont/' + font.PostScriptName + '/Type/Font')
+	}, putFont = function(font) {
+		font.objectNumber = newObject();
+		out('<</BaseFont/' + font.PostScriptName + '/Type/Font');
 		if (typeof font.encoding === 'string') {
-			out('/Encoding/'+font.encoding)			
+			out('/Encoding/'+font.encoding)		;	
 		}
-		out('/Subtype/Type1>>')
-		out('endobj')
+		out('/Subtype/Type1>>');
+		out('endobj');
 	}
 	, addToFontDictionary = function(fontKey, fontName, fontStyle) {
 		// this is mapping structure for quick font key lookup.
 		// returns the KEY of the font (ex: "F1") for a given pair of font name and type (ex: "Arial". "Italic")
-		var undef
+		var undef;
 		if (fontmap[fontName] === undef){
-			fontmap[fontName] = {} // fontStyle is a var interpreted and converted to appropriate string. don't wrap in quotes.
+			fontmap[fontName] = {}; // fontStyle is a var interpreted and converted to appropriate string. don't wrap in quotes.
 		}
-		fontmap[fontName][fontStyle] = fontKey
+		fontmap[fontName][fontStyle] = fontKey;
 	}
 	/**
 	FontObject describes a particular font as member of an instnace of jsPDF
@@ -754,7 +746,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	*/
 	, FontObject = {}
 	, addFont = function(PostScriptName, fontName, fontStyle, encoding) {
-		var fontKey = 'F' + (getObjectLength(fonts) + 1).toString(10)
+		var fontKey = 'F' + (getObjectLength(fonts) + 1).toString(10);
 		
 		// This is FontObject 
 		var font = fonts[fontKey] = {
@@ -765,13 +757,13 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			, 'fontStyle': fontStyle
 			, 'encoding': encoding
 			, 'metadata': {}
-		}
+		};
 
-		addToFontDictionary(fontKey, fontName, fontStyle)
+		addToFontDictionary(fontKey, fontName, fontStyle);
 
-		events.publish('addFont', font)		
+		events.publish('addFont', font)		;
 
-		return fontKey
+		return fontKey;
 	}
 	, addFonts = function() {
 
@@ -796,60 +788,60 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			, ['Times-Bold', TIMES, BOLD]
 			, ['Times-Italic', TIMES, ITALIC]
 			, ['Times-BoldItalic', TIMES, BOLD_ITALIC]
-		]
+		];
 
-		var i, l, fontKey, parts
+		var i, l, fontKey, parts;
 		for (i = 0, l = standardFonts.length; i < l; i++) {
 			fontKey = addFont(
 				standardFonts[i][0]
 				, standardFonts[i][1]
 				, standardFonts[i][2]
 				, encoding
-			)
+			);
 
 			// adding aliases for standard fonts, this time matching the capitalization
-			parts = standardFonts[i][0].split('-')
-			addToFontDictionary(fontKey, parts[0], parts[1] || '')
+			parts = standardFonts[i][0].split('-');
+			addToFontDictionary(fontKey, parts[0], parts[1] || '');
 		}
 
-		events.publish('addFonts', {'fonts':fonts, 'dictionary':fontmap})
+		events.publish('addFonts', {'fonts':fonts, 'dictionary':fontmap});
 	}
 	, putResourceDictionary = function() {
-		out('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]')
-		out('/Font <<')
+		out('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
+		out('/Font <<');
 		// Do this for each font, the '1' bit is the index of the font
 		for (var fontKey in fonts) {
 			if (fonts.hasOwnProperty(fontKey)) {
-				out('/' + fontKey + ' ' + fonts[fontKey].objectNumber + ' 0 R')
+				out('/' + fontKey + ' ' + fonts[fontKey].objectNumber + ' 0 R');
 			}
 		}
-		out('>>')
-		out('/XObject <<')
-		putXobjectDict()
-		out('>>')
+		out('>>');
+		out('/XObject <<');
+		putXobjectDict();
+		out('>>');
 	}
 	, putXobjectDict = function() {
 		// Loop through images, or other data objects
-		events.publish('putXobjectDict')
+		events.publish('putXobjectDict');
 	}
 	, putInfo = function() {
-		out('/Producer (jsPDF ' + version + ')')
+		out('/Producer (jsPDF ' + version + ')');
 		if(documentProperties.title) {
-			out('/Title (' + pdfEscape(documentProperties.title) + ')')
+			out('/Title (' + pdfEscape(documentProperties.title) + ')');
 		}
 		if(documentProperties.subject) {
-			out('/Subject (' + pdfEscape(documentProperties.subject) + ')')
+			out('/Subject (' + pdfEscape(documentProperties.subject) + ')');
 		}
 		if(documentProperties.author) {
-			out('/Author (' + pdfEscape(documentProperties.author) + ')')
+			out('/Author (' + pdfEscape(documentProperties.author) + ')');
 		}
 		if(documentProperties.keywords) {
-			out('/Keywords (' + pdfEscape(documentProperties.keywords) + ')')
+			out('/Keywords (' + pdfEscape(documentProperties.keywords) + ')');
 		}
 		if(documentProperties.creator) {
-			out('/Creator (' + pdfEscape(documentProperties.creator) + ')')
+			out('/Creator (' + pdfEscape(documentProperties.creator) + ')');
 		}		
-		var created = new Date()
+		var created = new Date();
 		out('/CreationDate (D:' + 
 			[
 				created.getFullYear()
@@ -860,7 +852,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 				, padd2(created.getSeconds())
 			].join('')+
 			')'
-		)
+	);
 	}
 	, putCatalog = function () {
 		out('/Type /Catalog')
@@ -1026,10 +1018,10 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			See comment higher above for explanation for why this is important
 		*/
 
-		var i, l, undef
+		var i, l, undef;
 
 		if (flags === undef) {
-			flags = {}
+			flags = {};
 		}
 
 		var sourceEncoding = flags.sourceEncoding ? sourceEncoding : 'Unicode'
@@ -1051,20 +1043,20 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			fonts[activeFontKey].metadata[sourceEncoding] &&
 			fonts[activeFontKey].metadata[sourceEncoding].encoding
 		) {
-			encodingBlock = fonts[activeFontKey].metadata[sourceEncoding].encoding
+			encodingBlock = fonts[activeFontKey].metadata[sourceEncoding].encoding;
 			
 			// each font has default encoding. Some have it clearly defined.
 			if (!outputEncoding && fonts[activeFontKey].encoding) {
-				outputEncoding = fonts[activeFontKey].encoding
+				outputEncoding = fonts[activeFontKey].encoding;
 			}
 
 			// Hmmm, the above did not work? Let's try again, in different place.
 			if (!outputEncoding && encodingBlock.codePages) {
-				outputEncoding = encodingBlock.codePages[0] // let's say, first one is the default
+				outputEncoding = encodingBlock.codePages[0]; // let's say, first one is the default
 			}
 
 			if (typeof outputEncoding === 'string') {
-				outputEncoding = encodingBlock[outputEncoding]
+				outputEncoding = encodingBlock[outputEncoding];
 			}
 			// we want output encoding to be a JS Object, where
 			// key = sourceEncoding's character code and 
@@ -1087,23 +1079,23 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 					// since we are looping over chars anyway, might as well
 					// check for residual unicodeness
 					if (newtext[i].charCodeAt(0) >> 8 /* more than 255 */ ) {
-						isUnicode = true
+						isUnicode = true;
 					}
 				}
-				text = newtext.join('')
+				text = newtext.join('');
 			}
 		}
 
-		i = text.length
+		i = text.length;
 		// isUnicode may be set to false above. Hence the triple-equal to undefined
 		while (isUnicode === undef && i !== 0){
 			if ( text.charCodeAt(i - 1) >> 8 /* more than 255 */ ) {
-				isUnicode = true
+				isUnicode = true;
 			}
 			;i--;
 		}
 		if (!isUnicode) {
-			return text
+			return text;
 		} else {
 			newtext = flags.noBOM ? [] : [254, 255]
 			for (i = 0, l = text.length; i < l; i++) {
@@ -1140,7 +1132,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			op = 'B'; // both
 		}
 		return op;
-	}
+	};
 	
 
 	//---------------------------------------
@@ -1169,13 +1161,13 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 				arguments.length === 1? 
 				arguments[0] : 
 				Array.prototype.join.call(arguments, ' ')
-			)
+			);
 		}
 		, 'getCoordinateString': function(value){
-			return f2(value * k)
+			return f2(value * k);
 		}
 		, 'getVerticalCoordinateString': function(value){
-			return f2((pageHeight - value) * k)
+			return f2((pageHeight - value) * k);
 		}
 		, 'collections': {}
 		, 'newObject': newObject
@@ -1189,7 +1181,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		// through multiplication.
 		, 'scaleFactor': k 
 		, 'pageSize': {'width':pageWidth, 'height':pageHeight}
-	}
+	};
 	
 	/**
 	Adds (and transfers the focus to) new page to the PDF document.
@@ -1199,9 +1191,9 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@name addPage
 	 */
 	API.addPage = function() {
-		_addPage()
-		return this
-	}
+		_addPage();
+		return this;
+	};
 
 	/**
 	Adds text to page. Supports adding multiline text when 'text' argument is an Array of Strings. 
@@ -1298,17 +1290,17 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			'\n' + f2(x * k) + ' ' + f2((pageHeight - y) * k) + ' Td\n(' + 
 			str +
 			') Tj\nET'
-		)
-		return this
-	}
+		);
+		return this;
+	};
 
 	API.line = function(x1, y1, x2, y2) {
 		out(
 			f2(x1 * k) + ' ' + f2((pageHeight - y1) * k) + ' m ' +
 			f2(x2 * k) + ' ' + f2((pageHeight - y2) * k) + ' l S'			
-		)
-		return this
-	}
+		);
+		return this;
+	};
 
 	/**
 	Adds series of curves (straight lines or cubic bezier curves) to canvas, starting at `x`, `y` coordinates.
@@ -1350,7 +1342,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		scale = scale === undef ? [1,1] : scale
 
 		// starting point
-		out(f3(x * k) + ' ' + f3((pageHeight - y) * k) + ' m ')
+		out(f3(x * k) + ' ' + f3((pageHeight - y) * k) + ' m ');
 		
 		var scalex = scale[0]
 		, scaley = scale[1]
@@ -1361,7 +1353,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		, x3, y3 // bezier only. In page default measurement "units", *after* scaling
 		// ending point for all, lines and bezier. . In page default measurement "units", *after* scaling
 		, x4 = x // last / ending point = starting point for first item.
-		, y4 = y // last / ending point = starting point for first item.
+		, y4 = y ;// last / ending point = starting point for first item.
 		
 		for (; i < l; i++) {
 			leg = lines[i]
@@ -1385,13 +1377,13 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 					f3((pageHeight - y3) * k) + ' ' +
 					f3(x4 * k) + ' ' + 
 					f3((pageHeight - y4) * k) + ' c'
-				)
+				);
 			}
 		}			
 		// stroking / filling / both the path
-		out(style) 
-		return this
-	}
+		out(style) ;
+		return this;
+	};
 
 	/**
 	Adds a rectangle to PDF
@@ -1407,7 +1399,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@name rect
 	 */
 	API.rect = function(x, y, w, h, style) {
-		var op = getStyle(style)
+		var op = getStyle(style);
 		out([
 			f2(x * k)
 			, f2((pageHeight - y) * k)
@@ -1415,9 +1407,9 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			, f2(-h * k)
 			, 're'
 			, op
-		].join(' '))
-		return this
-	}
+		].join(' '));
+		return this;
+	};
 
 	/**
 	Adds a triangle to PDF
@@ -1444,9 +1436,9 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			, x1, y1 // start of path
 			, [1,1]
 			, style
-		)
+		);
 		return this;
-	}
+	};
 
 	/**
 	Adds an ellipse to PDF
@@ -1464,7 +1456,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	API.ellipse = function(x, y, rx, ry, style) {
 		var op = getStyle(style)
 		, lx = 4/3*(Math.SQRT2-1)*rx
-		, ly = 4/3*(Math.SQRT2-1)*ry
+		, ly = 4/3*(Math.SQRT2-1)*ry;
 		
 		out([
 			f2((x+rx)*k)
@@ -1477,7 +1469,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			, f2(x*k)
 			, f2((pageHeight-(y-ry))*k)
 			, 'c'
-		].join(' '))
+		].join(' '));
 		out([
 			f2((x-lx)*k)
 			, f2((pageHeight-(y-ry))*k)
@@ -1486,7 +1478,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			, f2((x-rx)*k)
 			, f2((pageHeight-y)*k)
 			, 'c'
-		].join(' '))
+		].join(' '));
 		out([
 			f2((x-rx)*k)
 			, f2((pageHeight-(y+ly))*k)
@@ -1495,7 +1487,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			, f2(x*k)
 			, f2((pageHeight-(y+ry))*k)
 			, 'c'
-		].join(' '))
+		].join(' '));
 		out([
 			f2((x+lx)*k)
 			, f2((pageHeight-(y+ry))*k)
@@ -1505,9 +1497,9 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			, f2((pageHeight-y)*k) 
 			,'c'
 			, op
-		].join(' '))
-		return this
-	}
+		].join(' '));
+		return this;
+	};
 
 	/**
 	Adds an circle to PDF
@@ -1522,8 +1514,8 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@name circle
 	 */
 	API.circle = function(x, y, r, style) {
-		return this.ellipse(x, y, r, r, style)
-	}
+		return this.ellipse(x, y, r, r, style);
+	};
 
 	/**
 	Adds a properties to the PDF document
@@ -1538,15 +1530,15 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		// copying only those properties we can render.
 		for (var property in documentProperties){
 			if (documentProperties.hasOwnProperty(property) && properties[property]) {
-				documentProperties[property] = properties[property]
+				documentProperties[property] = properties[property];
 			}
 		}
-		return this
-	}
+		return this;
+	};
 
 	API.addImage = function(imageData, format, x, y, w, h) {
-		return this
-	}
+		return this;
+	};
 
 	/**
 	Sets font size for upcoming text elements.
@@ -1558,9 +1550,9 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@name setFontSize
 	 */
 	API.setFontSize = function(size) {
-		activeFontSize = size
-		return this
-	}
+		activeFontSize = size;
+		return this;
+	};
 
 	/**
 	Sets text font face, variant for upcoming text elements.
@@ -1574,10 +1566,10 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@name setFont
 	 */
 	API.setFont = function(fontName, fontStyle) {
-		activeFontKey = getFont(fontName, fontStyle)
+		activeFontKey = getFont(fontName, fontStyle);
 		// if font is not found, the above line blows up and we never go further
-		return this
-	}
+		return this;
+	};
 
 	/**
 	Switches font style or variant for upcoming text elements,
@@ -1591,11 +1583,11 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@name setFontStyle
 	 */
 	API.setFontStyle = API.setFontType = function(style) {
-		var undef
-		activeFontKey = getFont(undef, style)
+		var undef;
+		activeFontKey = getFont(undef, style);
 		// if font is not found, the above line blows up and we never go further
-		return this
-	}
+		return this;
+	};
 
 	/**
 	Returns an object - a tree of fontName to fontStyle relationships available to 
@@ -1611,21 +1603,19 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		var list = {}
 		, fontName
 		, fontStyle
-		, tmp
-
+		, tmp;
 		for (fontName in fontmap) {
 			if (fontmap.hasOwnProperty(fontName)) {
-				list[fontName] = tmp = []
+				list[fontName] = tmp = [];
 				for (fontStyle in fontmap[fontName]){
 					if (fontmap[fontName].hasOwnProperty(fontStyle)) {
-						tmp.push(fontStyle)
+						tmp.push(fontStyle);
 					}
 				}
 			}
-		}
-
-		return list
-	}
+		};
+		return list;
+	};
 
 	/**
 	Sets line width for upcoming lines.
@@ -1637,9 +1627,9 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@name setLineWidth
 	 */
 	API.setLineWidth = function(width) {
-		out((width * k).toFixed(2) + ' w')
-		return this
-	}
+		out((width * k).toFixed(2) + ' w');
+		return this;
+	};
 
 	/**
 	Sets the stroke color for upcoming elements. 
@@ -1655,15 +1645,15 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@name setDrawColor
 	 */
 	API.setDrawColor = function(r,g,b) {
-		var color
+		var color;
 		if ((r===0 && g===0 && b===0) || (typeof g === 'undefined')) {
-			color = f3(r/255) + ' G'
+			color = f3(r/255) + ' G';
 		} else {
-			color = [f3(r/255), f3(g/255), f3(b/255), 'RG'].join(' ')
+			color = [f3(r/255), f3(g/255), f3(b/255), 'RG'].join(' ');
 		}
-		out(color)
-		return this
-	}
+		out(color);
+		return this;
+	};
 
 	/**
 	Sets the fill color for upcoming elements. 
@@ -1679,15 +1669,15 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@name setFillColor
 	 */
 	API.setFillColor = function(r,g,b) {
-		var color
+		var color;
 		if ((r===0 && g===0 && b===0) || (typeof g === 'undefined')) {
-			color = f3(r/255) + ' g'
+			color = f3(r/255) + ' g';
 		} else {
-			color = [f3(r/255), f3(g/255), f3(b/255), 'rg'].join(' ')
+			color = [f3(r/255), f3(g/255), f3(b/255), 'rg'].join(' ');
 		}
-		out(color)
-		return this
-	}
+		out(color);
+		return this;
+	};
 
 	/**
 	Sets the text color for upcoming elements. 
@@ -1704,12 +1694,12 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	*/
 	API.setTextColor = function(r,g,b) {
 		if ((r===0 && g===0 && b===0) || (typeof g === 'undefined')) {
-			textColor = f3(r/255) + ' g'
+			textColor = f3(r/255) + ' g';
 		} else {
-			textColor = [f3(r/255), f3(g/255), f3(b/255), 'rg'].join(' ')
+			textColor = [f3(r/255), f3(g/255), f3(b/255), 'rg'].join(' ');
 		}
-		return this
-	}
+		return this;
+	};
 
 	/**
 	Is an Object providing a mapping from human-readable to
@@ -1724,7 +1714,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		0:0, 'butt':0, 'but':0, 'bevel':0
 		, 1:1, 'round': 1, 'rounded':1, 'circle':1
 		, 2:2, 'projecting':2, 'project':2, 'square':2, 'milter':2
-	}
+	};
 
 	/**
 	Sets the line cap styles
@@ -1738,15 +1728,15 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	*/
 	API.setLineCap = function(style) {
 		var undefined
-		, id = this.CapJoinStyles[style]
+		, id = this.CapJoinStyles[style];
 		if (id === undefined) {
-			throw new Error("Line cap style of '"+style+"' is not recognized. See or extend .CapJoinStyles property for valid styles")
+			throw new Error("Line cap style of '"+style+"' is not recognized. See or extend .CapJoinStyles property for valid styles");
 		}
-		lineCapID = id
-		out(id.toString(10) + ' J')
+		lineCapID = id;
+		out(id.toString(10) + ' J');
 
-		return this
-	}
+		return this;
+	};
 
 	/**
 	Sets the line join styles
@@ -1760,15 +1750,15 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	*/
 	API.setLineJoin = function(style) {
 		var undefined
-		, id = this.CapJoinStyles[style]
+		, id = this.CapJoinStyles[style];
 		if (id === undefined) {
-			throw new Error("Line join style of '"+style+"' is not recognized. See or extend .CapJoinStyles property for valid styles")
+			throw new Error("Line join style of '"+style+"' is not recognized. See or extend .CapJoinStyles property for valid styles");
 		}
-		lineJoinID = id
-		out(id.toString(10) + ' j')
+		lineJoinID = id;
+		out(id.toString(10) + ' j');
 
-		return this
-	}
+		return this;
+	};
 
 	/**
 	Generates the PDF document.
@@ -1797,7 +1787,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			default: throw new Error('Output type "'+type+'" is not supported.') 
 		}
 		// @TODO: Add different output options
-	}
+	};
 
 	// applying plugins (more methods) ON TOP of built-in API.
 	// this is intentional as we allow plugins to override 
@@ -1821,8 +1811,8 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 						// users can attach callback directly, 
 						// or they can attach an array with [callback, runonce_flag]
 						// that's what the "apply" magic is for below.
-						eventname = newEvents[i][0]
-						handler_and_args = newEvents[i][1]
+						eventname = newEvents[i][0];
+						handler_and_args = newEvents[i][1];
 						events.subscribe.apply(
 							events
 							, [eventname].concat(
@@ -1830,11 +1820,11 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 							  	[ handler_and_args ] :
 							  	handler_and_args
 							)
-						)
+						);
 					}
-				})(events, jsPDF.API.events)
+				})(events, jsPDF.API.events);
 			} else {
-				API[plugin] = jsPDF.API[plugin]
+				API[plugin] = jsPDF.API[plugin];
 			}
 		}
 	}
@@ -1845,13 +1835,13 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 
 
 	// Add the first page automatically
-	addFonts()
-	activeFontKey = 'F1'
-	_addPage()
+	addFonts();
+	activeFontKey = 'F1';
+	_addPage();
 
-	events.publish('initialized')
+	events.publish('initialized');
 
-	return API
+	return API;
 }
 
 /**
@@ -1876,9 +1866,9 @@ Examples:
 	var pdfdoc = new jsPDF()
 	pdfdoc.mymethod() // <- !!!!!!	
 */
-jsPDF.API = {'events':[]}
+jsPDF.API = {'events':[]};
 
-return jsPDF
+return jsPDF;
 })()
 
 /** @preserve 
@@ -1909,15 +1899,15 @@ Copyright (c) 2012 https://github.com/siefkenj/
  */
 
 ;(function(jsPDFAPI) {
-'use strict'
+'use strict';
 
-var namespace = 'addImage_'
+var namespace = 'addImage_';
 
 // takes a string imgData containing the raw bytes of
 // a jpeg image and returns [width, height]
 // Algorithm from: http://www.64lines.com/jpeg-width-height
 var getJpegSize = function(filename) {
-	'use strict'
+	'use strict';
     var imgFile = Ti.Filesystem.getFile(filename);
     var imgData = imgFile.read();
 
@@ -1932,7 +1922,7 @@ var getJpegSize = function(filename) {
 		!imgData.charCodeAt(8) === 'I'.charCodeAt(0) ||
 		!imgData.charCodeAt(9) === 'F'.charCodeAt(0) ||
 		!imgData.charCodeAt(10) === 0x00) {
-			throw new Error('getJpegSize requires a binary jpeg file')
+			throw new Error('getJpegSize requires a binary jpeg file');
 	}
 	var blockLength = imgData.charCodeAt(4)*256 + imgData.charCodeAt(5);
 	var i = 4, len = imgData.length;
@@ -1947,7 +1937,7 @@ var getJpegSize = function(filename) {
 			return [width, height];
 		} else {
 			i += 2;
-			blockLength = imgData.charCodeAt(i)*256 + imgData.charCodeAt(i+1)
+			blockLength = imgData.charCodeAt(i)*256 + imgData.charCodeAt(i+1);
 		}
 	}
 }
@@ -1955,14 +1945,14 @@ var getJpegSize = function(filename) {
 , putImage = function(img) {
 	var objectNumber = this.internal.newObject()
 	, out = this.internal.write
-	, putStream = this.internal.putStream
+	, putStream = this.internal.putStream;
 
-	img['n'] = objectNumber
+	img['n'] = objectNumber;
 
-	out('<</Type /XObject')
-	out('/Subtype /Image')
-	out('/Width ' + img['imageWidth'])
-	out('/Height ' + img['imageHeight'])
+	out('<</Type /XObject');
+	out('/Subtype /Image');
+	out('/Width ' + img['imageWidth']);
+	out('/Height ' + img['imageHeight']);
 	if (img['cs'] === 'Indexed') {
 		out('/ColorSpace [/Indexed /DeviceRGB '
 				+ (img['pal'].length / 3 - 1) + ' ' + (objectNumber + 1)
@@ -1997,55 +1987,51 @@ var getJpegSize = function(filename) {
 	out('endobj');
 }
 , putResourcesCallback = function() {
-	var images = this.internal.collections[namespace + 'images']
+	var images = this.internal.collections[namespace + 'images'];
 	for ( var i in images ) {
-		putImage.call(this, images[i])
+		putImage.call(this, images[i]);
 	}
 }
 , putXObjectsDictCallback = function(){
 	var images = this.internal.collections[namespace + 'images']
 	, out = this.internal.write
-	, image
+	, image;
 	for (var i in images) {
-		image = images[i]
+		image = images[i];
 		out(
 			'/I' + image['i']
 			, image['n']
 			, '0'
 			, 'R'
-		)
+		);
 	}
-}
+};
 
 jsPDFAPI.addImage = function(imageData, format, x, y, w, h, imageWidth, imageHeight, fileSize) {
-	'use strict'
-
+	'use strict';
 	if (format.toUpperCase() !== 'JPEG') {
 		throw new Error('addImage currently only supports format \'JPEG\', not \''+format+'\'');
 	}
-
 	var imageIndex
 	, images = this.internal.collections[namespace + 'images']
 	, coord = this.internal.getCoordinateString
-	, vcoord = this.internal.getVerticalCoordinateString
-
-	if (images){
+	, vcoord = this.internal.getVerticalCoordinateString;
+	if (images) {
 		// this is NOT the first time this method is ran on this instance of jsPDF object.
 		imageIndex = Object.keys ? 
 		Object.keys(images).length :
 		(function(o){
-			var i = 0
-			for (var e in o){if(o.hasOwnProperty(e)){ i++ }}
-			return i
-		})(images)
+			var i = 0;
+			for (var e in o){if(o.hasOwnProperty(e)){ i++; }}
+			return i;
+		})(images);
 	} else {
 		// this is the first time this method is ran on this instance of jsPDF object.
-		imageIndex = 0
-		this.internal.collections[namespace + 'images'] = images = {}
-		this.internal.events.subscribe('putResources', putResourcesCallback)
-		this.internal.events.subscribe('putXobjectDict', putXObjectsDictCallback)
+		imageIndex = 0;
+		this.internal.collections[namespace + 'images'] = images = {};
+		this.internal.events.subscribe('putResources', putResourcesCallback);
+		this.internal.events.subscribe('putXobjectDict', putXObjectsDictCallback);
 	}
-
 	var dims = [
         w,
         h
@@ -2063,7 +2049,7 @@ jsPDFAPI.addImage = function(imageData, format, x, y, w, h, imageWidth, imageHei
 		data: imageData,
 		fileSize: fileSize
 	};
-	images[imageIndex] = info
+	images[imageIndex] = info;
 	if (!w && !h) {
 		w = -96;
 		h = -96;
@@ -2090,10 +2076,10 @@ jsPDFAPI.addImage = function(imageData, format, x, y, w, h, imageWidth, imageHei
 		, vcoord(y + h)
 		, 'cm /I'+info['i']
 		, 'Do Q'
-	)
+	);
 
-	return this 
-}
+	return this; 
+};
 
 })(jsPDF.API)
 
@@ -2125,11 +2111,10 @@ Copyright (c) 2012 https://github.com/siefkenj/
  */
 
 ;(function(jsPDFAPI) {
-'use strict'
+'use strict';
 
     jsPDFAPI.save = function (file) {
-        'use strict'
-        
+        'use strict';
         if(file.exists()){
         	file.deleteFile();
         }
@@ -2150,21 +2135,687 @@ Copyright (c) 2012 https://github.com/siefkenj/
                 break;  
             }
         }
-        return this
+        return this;
     };
     
 })(jsPDF.API);
 
 ;(function(jsPDFAPI) {
-'use strict'
-
+	'use strict';
     jsPDFAPI.test = function () {
-        'use strict'
-        
+        'use strict';
         this.addPage();
-        return this
+        return this;
     };
-    
 })(jsPDF.API);
+/* ====== */
+
+/**
+ * jsPDF AutoTable plugin
+ * Copyright (c) 2014 Simon Bengtsson, https://github.com/someatoms/jsPDF-AutoTable
+ *
+ * Licensed under the MIT License.
+ * http://opensource.org/licenses/mit-license
+ */
+(function (API) {
+    'use strict';
+    // Ratio between font size and font height. The number comes from jspdf's source code
+    var FONT_ROW_RATIO = 1.15;
+    var doc, // The current jspdf instance
+        cursor, // An object keeping track of the x and y position of the next table cell to draw
+        settings, // Default options merged with user options
+        pageCount, // The  page count the current table spans
+        table; // The current Table instance
+
+    // Base style for all themes
+    var defaultStyles = {
+        cellPadding: 5,
+        fontSize: 10,
+        font: "helvetica", // helvetica, times, courier
+        lineColor: 200,
+        lineWidth: 0.1,
+        fontStyle: 'normal', // normal, bold, italic, bolditalic
+        overflow: 'ellipsize', // visible, hidden, ellipsize or linebreak
+        fillColor: 255,
+        textColor: 20,
+        halign: 'left', // left, center, right
+        valign: 'middle', // top, middle, bottom
+        fillStyle: 'F', // 'S', 'F' or 'DF' (stroke, fill or fill then stroke)
+        rowHeight: 20,
+        columnWidth: 'auto'
+    };
+
+    // Styles for the themes
+    var themes = {
+        'striped': {
+            table: {
+                fillColor: 255,
+                textColor: 80,
+                fontStyle: 'normal',
+                fillStyle: 'F'
+            },
+            header: {
+                textColor: 255,
+                fillColor: [41, 128, 185],
+                rowHeight: 23,
+                fontStyle: 'bold'
+            },
+            body: {},
+            alternateRow: {fillColor: 245}
+        },
+        'grid': {
+            table: {
+                fillColor: 255,
+                textColor: 80,
+                fontStyle: 'normal',
+                lineWidth: 0.1,
+                fillStyle: 'S'
+            },
+            header: {
+                textColor: 255,
+                fillColor: [26, 188, 156],
+                rowHeight: 23,
+                fillStyle: 'F',
+                fontStyle: 'bold'
+            },
+            body: {},
+            alternateRow: {}
+        },
+        'plain': {header: {fontStyle: 'bold'}}
+    };
+
+    // See README.md for documentation of the options
+    // See examples.js for usage examples
+    var defaultOptions = function () {
+        return {
+            // Styling
+            theme: 'striped', // 'striped', 'grid' or 'plain'
+            styles: {},
+            headerStyles: {},
+            bodyStyles: {},
+            alternateRowStyles: {},
+            columnStyles: {},
+
+            // Properties
+            startY: false, // false indicates the margin.top value
+            margin: 40,
+            pageBreak: 'auto', // 'auto', 'avoid', 'always'
+            tableWidth: 'auto', // number, 'auto', 'wrap'
+
+            // Hooks
+            createdHeaderCell: function (cell, data) {},
+            createdCell: function (cell, data) {},
+            drawHeaderRow: function (row, data) {},
+            drawRow: function (row, data) {},
+            drawHeaderCell: function (cell, data) {},
+            drawCell: function (cell, data) {},
+            beforePageContent: function (data) {},
+            afterPageContent: function (data) {}
+        }
+    };
+
+    /**
+     * Create a table from a set of rows and columns.
+     *
+     * @param {Object[]|String[]} headers Either as an array of objects or array of strings
+     * @param {Object[][]|String[][]} data Either as an array of objects or array of strings
+     * @param {Object} [options={}] Options that will override the default ones
+     */
+    API.autoTable = function (headers, data, options) {
+        doc = this;
+        settings = initOptions(options || {});
+        pageCount = 1;
+        cursor = {
+            x: settings.margin.left,
+            y: settings.startY === false ? settings.margin.top : settings.startY
+        };
+
+        var userStyles = {
+            textColor: 30, // Setting text color to dark gray as it can't be obtained from jsPDF
+            fontSize: doc.internal.getFontSize(),
+            fontStyle: doc.internal.getFont().fontStyle
+        };
+
+        // Create the table model with its columns, rows and cells
+        createModels(headers, data);
+        calculateWidths();
+
+        // Page break if there is room for only the first data row
+        var firstRowHeight = table.rows[0] && settings.pageBreak === 'auto' ? table.rows[0].height : 0;
+        var minTableBottomPos = settings.startY + settings.margin.bottom + table.headerRow.height + firstRowHeight;
+        if (settings.pageBreak === 'avoid') {
+            minTableBottomPos += table.height;
+        }
+        if ((settings.pageBreak === 'always' && settings.startY !== false) ||
+            (settings.startY !== false && minTableBottomPos > doc.internal.pageSize.height)) {
+            doc.addPage();
+            cursor.y = settings.margin.top;
+        }
+
+        applyStyles(userStyles);
+        settings.beforePageContent(hooksData());
+        if (settings.drawHeaderRow(table.headerRow, hooksData({row: table.headerRow})) !== false) {
+            printRow(table.headerRow, settings.drawHeaderCell);
+        }
+        applyStyles(userStyles);
+        printRows();
+        settings.afterPageContent(hooksData());
+
+        applyStyles(userStyles);
+
+        return this;
+    };
+
+    /**
+     * Returns the Y position of the last drawn cell
+     * @returns int
+     */
+    API.autoTableEndPosY = function () {
+        if (typeof cursor === 'undefined' || typeof cursor.y === 'undefined') {
+            console.error("autoTableEndPosY() called without autoTable() being called first");
+            return 0;
+        }
+        return cursor.y;
+    };
+
+    /**
+     * Parses an html table
+     *
+     * @param table Html table element
+     * @returns Object Object with two properties, columns and rows
+     */
+    API.autoTableHtmlToJson = function (table) {
+        var data = [],
+            headers = [],
+            header = table.rows[0],
+            tableRow,
+            rowData,
+            i,
+            j;
+
+        for (i = 0; i < header.cells.length; i++) {
+            headers.push(typeof header.cells[i] !== 'undefined' ? header.cells[i].textContent : '');
+        }
+
+        for (i = 1; i < table.rows.length; i++) {
+            tableRow = table.rows[i];
+            rowData = [];
+            for (j = 0; j < header.cells.length; j++) {
+                rowData.push(typeof tableRow.cells[j] !== 'undefined' ? tableRow.cells[j].textContent : '');
+            }
+            data.push(rowData);
+        }
+        return {columns: headers, data: data, rows: data};
+    };
+
+    /**
+     * Improved text function with halign and valign support
+     * Inspiration from: http://stackoverflow.com/questions/28327510/align-text-right-using-jspdf/28433113#28433113
+     */
+    API.autoTableText = function (text, x, y, styles) {
+        if (typeof x !== 'number' || typeof y !== 'number') {
+            console.error('The x and y parameters are required. Missing for the text: ', text);
+        }
+        var fontSize = doc.internal.getFontSize() / doc.internal.scaleFactor;
+
+        // As defined in jsPDF source code
+        var lineHeightProportion = FONT_ROW_RATIO;
+
+        var splitRegex = /\r\n|\r|\n/g;
+        var splittedText = null;
+        var lineCount = 1;
+        if (styles.valign === 'middle' || styles.valign === 'bottom' || styles.halign === 'center' || styles.halign === 'right') {
+            splittedText = typeof text === 'string' ? text.split(splitRegex) : text;
+
+            lineCount = splittedText.length || 1;
+        }
+
+        // Align the top
+        y += fontSize * (2 - lineHeightProportion);
+
+        if (styles.valign === 'middle')
+            y -= (lineCount / 2) * fontSize;
+        else if (styles.valign === 'bottom')
+            y -= lineCount * fontSize;
+
+        if (styles.halign === 'center' || styles.halign === 'right') {
+            var alignSize = fontSize;
+            if (styles.halign === 'center')
+                alignSize *= 0.5;
+
+            if (lineCount >= 1) {
+                for (var iLine = 0; iLine < splittedText.length; iLine++) {
+                    doc.text(splittedText[iLine], x - doc.getStringUnitWidth(splittedText[iLine]) * alignSize, y);
+                    y += fontSize;
+                }
+                return doc;
+            }
+            x -= doc.getStringUnitWidth(text) * alignSize;
+        }
+
+        doc.text(text, x, y);
+        return doc;
+    };
+
+    function initOptions(userOptions) {
+        var settings = extend(defaultOptions(), userOptions);
+
+        // Options
+        if (typeof settings.extendWidth !== 'undefined') {
+            settings.tableWidth = settings.extendWidth ? 'auto' : 'wrap';
+            console.error("Use of deprecated option: extendWidth, use tableWidth instead.");
+        }
+        if (typeof settings.margins !== 'undefined') {
+            if (typeof settings.margin === 'undefined') settings.margin = settings.margins;
+            console.error("Use of deprecated option: margins, use margin instead.");
+        }
+
+        [['padding', 'cellPadding'], ['lineHeight', 'rowHeight'], 'fontSize', 'overflow'].forEach(function (o) {
+            var deprecatedOption = typeof o === 'string' ? o : o[0];
+            var style = typeof o === 'string' ? o : o[1];
+            if (typeof settings[deprecatedOption] !== 'undefined') {
+                if (typeof settings.styles[style] === 'undefined') {
+                    settings.styles[style] = settings[deprecatedOption];
+                }
+                console.error("Use of deprecated option: " + deprecatedOption + ", use the style " + style + " instead.");
+            }
+        });
+
+        // Unifying
+        var marginSetting = settings.margin;
+        settings.margin = {};
+        if (typeof marginSetting.horizontal === 'number') {
+            marginSetting.right = marginSetting.horizontal;
+            marginSetting.left = marginSetting.horizontal;
+        }
+        if (typeof marginSetting.vertical === 'number') {
+            marginSetting.top = marginSetting.vertical;
+            marginSetting.bottom = marginSetting.vertical;
+        }
+        ['top', 'right', 'bottom', 'left'].forEach(function (side, i) {
+            if (typeof marginSetting === 'number') {
+                settings.margin[side] = marginSetting;
+            } else {
+                var key = Array.isArray(marginSetting) ? i : side;
+                settings.margin[side] = typeof marginSetting[key] === 'number' ? marginSetting[key] : 40;
+            }
+        });
+
+        return settings;
+    }
+
+    /**
+     * Create models from the user input
+     *
+     * @param inputHeaders
+     * @param inputData
+     */
+    function createModels(inputHeaders, inputData) {
+        table = new Table();
+
+        var splitRegex = /\r\n|\r|\n/g;
+
+        // Header row and columns
+        var headerRow = new Row();
+        headerRow.raw = inputHeaders;
+        headerRow.index = -1;
+
+        var themeStyles = extend(defaultStyles, themes[settings.theme].table, themes[settings.theme].header);
+        headerRow.styles = extend(themeStyles, settings.styles, settings.headerStyles);
+
+        // Columns and header row
+        inputHeaders.forEach(function (rawColumn, dataKey) {
+            if (typeof rawColumn === 'object') {
+                dataKey = typeof rawColumn.dataKey !== 'undefined' ? rawColumn.dataKey : rawColumn.key;
+            }
+
+            if (typeof rawColumn.width !== 'undefined') {
+                console.error("Use of deprecated option: column.width, use column.styles.columnWidth instead.");
+            }
+
+            var col = new Column(dataKey);
+            col.styles = {};
+            if (typeof col.styles.columnWidth === 'undefined') col.styles.columnWidth = 'auto';
+            table.columns.push(col);
+
+            var cell = new Cell();
+            cell.raw = typeof rawColumn === 'object' ? rawColumn.title : rawColumn;
+            cell.styles = headerRow.styles;
+            cell.text = '' + cell.raw;
+            cell.contentWidth = cell.styles.cellPadding * 2 + getStringWidth(cell.text, cell.styles);
+            cell.text = cell.text.split(splitRegex);
+
+            headerRow.cells[dataKey] = cell;
+            settings.createdHeaderCell(cell, {column: col, row: headerRow, settings: settings});
+        });
+        table.headerRow = headerRow;
+
+        // Rows och cells
+        inputData.forEach(function (rawRow, i) {
+            var row = new Row(rawRow);
+            var isAlternate = i % 2 === 0;
+            var themeStyles = extend(defaultStyles, themes[settings.theme].table, isAlternate ? themes[settings.theme].alternateRow : {});
+            var userStyles = extend(settings.styles, settings.bodyStyles, isAlternate ? settings.alternateRowStyles : {});
+            row.styles = extend(themeStyles, userStyles);
+            row.index = i;
+            table.columns.forEach(function (column) {
+                var cell = new Cell();
+                cell.raw = rawRow[column.dataKey];
+                cell.styles = extend(row.styles, column.styles);
+                cell.text = typeof cell.raw !== 'undefined' ? '' + cell.raw : ''; // Stringify 0 and false, but not undefined
+                row.cells[column.dataKey] = cell;
+                settings.createdCell(cell, {column: column, row: row, settings: settings});
+                cell.contentWidth = cell.styles.cellPadding * 2 + getStringWidth(cell.text, cell.styles);
+                cell.text = cell.text.split(splitRegex);
+            });
+            table.rows.push(row);
+        });
+    }
+
+    /**
+     * Calculate the column widths
+     */
+    function calculateWidths() {
+        // Column and table content width
+        var tableContentWidth = 0;
+        table.columns.forEach(function (column) {
+            column.contentWidth = table.headerRow.cells[column.dataKey].contentWidth;
+            table.rows.forEach(function (row) {
+                var cellWidth = row.cells[column.dataKey].contentWidth;
+                if (cellWidth > column.contentWidth) {
+                    column.contentWidth = cellWidth;
+                }
+            });
+            column.width = column.contentWidth;
+            tableContentWidth += column.contentWidth;
+        });
+        table.contentWidth = tableContentWidth;
+
+        var maxTableWidth = doc.internal.pageSize.width - settings.margin.left - settings.margin.right;
+        var preferredTableWidth = maxTableWidth; // settings.tableWidth === 'auto'
+        if (typeof settings.tableWidth === 'number') {
+            preferredTableWidth = settings.tableWidth;
+        } else if (settings.tableWidth === 'wrap') {
+            preferredTableWidth = table.contentWidth;
+        }
+        table.width = preferredTableWidth < maxTableWidth ? preferredTableWidth : maxTableWidth;
+
+        // To avoid subjecting columns with little content with the chosen overflow method,
+        // never shrink a column more than the table divided by column count (its "fair part")
+        var dynamicColumns = [];
+        var dynamicColumnsContentWidth = 0;
+        var fairWidth = table.width / table.columns.length;
+        var staticWidth = 0;
+        table.columns.forEach(function (column) {
+            if (column.styles.columnWidth === 'wrap') {
+                column.width = column.contentWidth;
+            } else if (typeof column.styles.columnWidth === 'number') {
+                column.width = column.styles.columnWidth;
+            } else if (column.styles.columnWidth === 'auto' || true) {
+                if (column.contentWidth <= fairWidth && table.contentWidth > table.width) {
+                    column.width = column.contentWidth;
+                } else {
+                    dynamicColumns.push(column);
+                    dynamicColumnsContentWidth += column.contentWidth;
+                    column.width = 0;
+                }
+            }
+            staticWidth += column.width;
+        });
+
+        // Distributes extra width or trims columns down to fit
+        distributeWidth(dynamicColumns, staticWidth, dynamicColumnsContentWidth, fairWidth);
+
+        // Row height, table height and text overflow
+        table.height = 0;
+        var all = table.rows.concat(table.headerRow);
+        all.forEach(function (row, i) {
+            var lineBreakCount = 0;
+            table.columns.forEach(function (col) {
+                var cell = row.cells[col.dataKey];
+                applyStyles(cell.styles);
+                var textSpace = col.width - cell.styles.cellPadding * 2;
+                if (cell.styles.overflow === 'linebreak') {
+                    // Add one pt to textSpace to fix rounding error
+                    cell.text = doc.splitTextToSize(cell.text, textSpace + 1, {fontSize: cell.styles.fontSize});
+                } else if (cell.styles.overflow === 'ellipsize') {
+                    cell.text = ellipsize(cell.text, textSpace, cell.styles);
+                } else if (cell.styles.overflow === 'visible') {
+                    // Do nothing
+                } else if (cell.styles.overflow === 'hidden') {
+                    cell.text = ellipsize(cell.text, textSpace, cell.styles, '');
+                } else if (typeof cell.styles.overflow === 'function') {
+                    cell.text = cell.styles.overflow(cell.text, textSpace);
+                } else {
+                    console.error("Unrecognized overflow type: " + cell.styles.overflow);
+                }
+                var count = Array.isArray(cell.text) ? cell.text.length - 1 : 0;
+                if (count > lineBreakCount) {
+                    lineBreakCount = count;
+                }
+            });
+            row.height = row.styles.rowHeight + lineBreakCount * row.styles.fontSize * FONT_ROW_RATIO;
+            table.height += row.height;
+        });
+    }
+
+    function distributeWidth(dynamicColumns, staticWidth, dynamicColumnsContentWidth, fairWidth) {
+        var extraWidth = table.width - staticWidth - dynamicColumnsContentWidth;
+        for (var i = 0; i < dynamicColumns.length; i++) {
+            var col = dynamicColumns[i];
+            var ratio = col.contentWidth / dynamicColumnsContentWidth;
+            // A column turned out to be none dynamic, start over recursively
+            var isNoneDynamic = col.contentWidth + extraWidth * ratio < fairWidth;
+            if (extraWidth < 0 && isNoneDynamic) {
+                dynamicColumns.splice(i, 1);
+                dynamicColumnsContentWidth -= col.contentWidth;
+                col.width = fairWidth;
+                staticWidth += col.width;
+                distributeWidth(dynamicColumns, staticWidth, dynamicColumnsContentWidth, fairWidth);
+                break;
+            } else {
+                col.width = col.contentWidth + extraWidth * ratio;
+            }
+        }
+    }
+
+    function printRows() {
+        table.rows.forEach(function (row, i) {
+            // Add a new page if cursor is at the end of page
+            var newPage = table.rows[i] && (cursor.y + table.rows[i].height + settings.margin.bottom) >= doc.internal.pageSize.height;
+            if (newPage) {
+                settings.afterPageContent(hooksData());
+                doc.addPage();
+                pageCount++;
+                cursor = {x: settings.margin.left, y: settings.margin.top};
+                settings.beforePageContent(hooksData());
+                if (settings.drawHeaderRow(row, hooksData({row: row})) !== false) {
+                    printRow(table.headerRow, settings.drawHeaderCell);
+                }
+            }
+            row.y = cursor.y;
+            doc.setTextColor(0);
+            if (settings.drawRow(row, hooksData({row: row})) !== false) {
+                printRow(row, settings.drawCell);
+            }
+        });
+    }
+
+    function printRow(row, hookHandler) {
+        table.columns.forEach(function (column) {
+            var cell = row.cells[column.dataKey];
+            applyStyles(cell.styles);
+
+            cell.x = cursor.x;
+            cell.y = cursor.y;
+            cell.height = row.height;
+            cell.width = column.width;
+
+            if (cell.styles.valign === 'top') {
+                cell.textPos.y = cursor.y + cell.styles.cellPadding;
+            } else if (cell.styles.valign === 'bottom') {
+                cell.textPos.y = cursor.y + row.height - cell.styles.cellPadding;
+            } else {
+                cell.textPos.y = cursor.y + row.height / 2;
+            }
+
+            if (cell.styles.halign === 'right') {
+                cell.textPos.x = cursor.x + cell.width - cell.styles.cellPadding;
+            } else if (cell.styles.halign === 'center') {
+                cell.textPos.x = cursor.x + cell.width / 2;
+            } else {
+                cell.textPos.x = cursor.x + cell.styles.cellPadding;
+            }
+
+            var data = hooksData({column: column, row: row});
+            if (hookHandler(cell, data) !== false) {
+                doc.rect(cell.x, cell.y, cell.width, cell.height, cell.styles.fillStyle);
+                doc.autoTableText(cell.text, cell.textPos.x, cell.textPos.y, {
+                    halign: cell.styles.halign,
+                    valign: cell.styles.valign
+                });
+            }
+
+            cursor.x += cell.width;
+        });
+
+        cursor.y += row.height;
+        cursor.x = settings.margin.left;
+    }
+
+    function applyStyles(styles) {
+        var arr = [
+            {func: doc.setFillColor, value: styles.fillColor},
+            {func: doc.setTextColor, value: styles.textColor},
+            {func: doc.setFontStyle, value: styles.fontStyle},
+            {func: doc.setDrawColor, value: styles.lineColor},
+            {func: doc.setLineWidth, value: styles.lineWidth},
+            {func: doc.setFont, value: styles.font},
+            {func: doc.setFontSize, value: styles.fontSize}
+        ];
+        arr.forEach(function (obj) {
+            if (typeof obj.value !== 'undefined') {
+                if (obj.value.constructor === Array) {
+                    obj.func.apply(this, obj.value);
+                } else {
+                    obj.func(obj.value);
+                }
+            }
+        });
+    }
+
+    function hooksData(additionalData) {
+        additionalData = additionalData || {};
+        var data = {
+            pageCount: pageCount,
+            settings: settings,
+            table: table,
+            cursor: cursor
+        };
+        for (var prop in additionalData) {
+            if (additionalData.hasOwnProperty(prop)) {
+                data[prop] = additionalData[prop];
+            }
+        }
+        return data;
+    }
+
+    /**
+     * Ellipsize the text to fit in the width
+     */
+    function ellipsize(text, width, styles, ellipsizeStr) {
+        ellipsizeStr = typeof  ellipsizeStr !== 'undefined' ? ellipsizeStr : '...';
+
+        if (Array.isArray(text)) {
+            text.forEach(function (str, i) {
+                text[i] = ellipsize(str, width, styles, ellipsizeStr);
+            });
+            return text;
+        }
+
+        if (width >= getStringWidth(text, styles)) {
+            return text;
+        }
+        while (width < getStringWidth(text + ellipsizeStr, styles)) {
+            if (text.length < 2) {
+                break;
+            }
+            text = text.substring(0, text.length - 1);
+        }
+        return text.trim() + ellipsizeStr;
+    }
+
+    function getStringWidth(text, styles) {
+        applyStyles(styles);
+        var w = doc.getStringUnitWidth(text);
+        return w * styles.fontSize;
+    }
+
+    function extend(defaults) {
+        var extended = {};
+        var prop;
+        for (prop in defaults) {
+            if (defaults.hasOwnProperty(prop)) {
+                extended[prop] = defaults[prop];
+            }
+        }
+        for (var i = 1; i < arguments.length; i++) {
+            var options = arguments[i];
+            for (prop in options) {
+                if (options.hasOwnProperty(prop)) {
+                    if (typeof options[prop] === 'object' && !Array.isArray(options[prop])) {
+                        //extended[prop] = extend(extended[prop] || {}, options[prop])
+                        extended[prop] = options[prop];
+                    } else {
+                        extended[prop] = options[prop];
+                    }
+                }
+            }
+        }
+        return extended;
+    }
+
+})(jsPDF.API);
+
+var Table = function () {
+    this.height = 0;
+    this.width = 0;
+    this.contentWidth = 0;
+    this.rows = [];
+    this.columns = [];
+    this.headerRow = null;
+    this.settings = {};
+};
+
+var Row = function () {
+    this.raw = {};
+    this.index = 0;
+    this.styles = {};
+    this.cells = {};
+    this.height = -1;
+    this.y = 0;
+};
+
+var Cell = function (raw) {
+    this.raw = raw;
+    this.styles = {};
+    this.text = '';
+    this.contentWidth = -1;
+    this.textPos = {};
+    this.height = 0;
+    this.width = 0;
+    this.x = 0;
+    this.y = 0;
+};
+
+var Column = function (dataKey) {
+    this.dataKey = dataKey;
+    this.options = {};
+    this.styles = {};
+    this.contentWidth = -1;
+    this.width = -1;
+};
+
+/* ====== */
 
 module.exports = jsPDF;  

@@ -7,10 +7,8 @@
  */
 (function (API) {
     'use strict';
-
     // Ratio between font size and font height. The number comes from jspdf's source code
     var FONT_ROW_RATIO = 1.15;
-
     var doc, // The current jspdf instance
         cursor, // An object keeping track of the x and y position of the next table cell to draw
         settings, // Default options merged with user options
@@ -101,7 +99,7 @@
             drawCell: function (cell, data) {},
             beforePageContent: function (data) {},
             afterPageContent: function (data) {}
-        }
+        };
     };
 
     /**
