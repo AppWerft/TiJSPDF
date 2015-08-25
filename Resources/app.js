@@ -57,7 +57,7 @@ var _tempFile = null;
         doc.rect(20, 120, 10, 10); // empty square
         doc.rect(40, 120, 10, 10, 'F'); // filled square
 
-        var imgSample2 = Ti.Filesystem.resourcesDirectory + 'image2.jpg'
+        var imgSample2 = Ti.Filesystem.resourcesDirectory + 'image2.jpg';
         doc.addImage(imgSample2, 'JPEG', 70, 10, 100, 120, 410, 615, 67506);
 
         doc.setFont("helvetica");

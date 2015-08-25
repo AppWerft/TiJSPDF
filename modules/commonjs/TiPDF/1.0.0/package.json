@@ -1,0 +1,15 @@
+{
+  "name": "TiPDF",
+  "version": "1.0.0",
+  "description": "jsPDF as Titanium module",
+  "main": "TiPDF.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AppWerft",
+  "license": "ISC",
+  "titaniumManifest": {
+    "guid": "875c6299-ec6d-d291-3a7c-6e7c1778e035"
+  },
+  "_nativeDependencies": {}
+}

@@ -4,6 +4,13 @@ This is an example app with jsPDF image support plug-in that allows you to use t
 
 This version is currently considered pre-release.
 
+Doku:
+https://mrrio.github.io/jsPDF/doc/symbols/jsPDF.html
+
+TablePlugin:
+https://github.com/someatoms/jsPDF-AutoTable
+
+
 Version 0.2
 
 [jsPDF libary](http://parall.ax/products/jspdf) 
