@@ -16,7 +16,7 @@ var _tempFile = null;
 		height : Ti.UI.SIZE,
 		left : 10,
 		right : 10,
-		text : 'Press the below button to demonstrate how to use jsPDF in Titanium. If you are using Android you will need to run this on the device to view the PDF.',
+		text : 'Press the below button to demonstrate how to use jsPDF in Titanium.',
 		top : 10,
 		width : Ti.UI.FILL
 	});
@@ -30,15 +30,15 @@ var _tempFile = null;
 		title : 'Run PDF Sample',
 		left : 20,
 		right : 20,
-		top : 40,
+		top : 30,
 		width : Ti.UI.FILL
 	});
 	win.add(btn);
 
 	btn.addEventListener('click', function(e) {
 
-		var columns = ["ID", "Name", "Country"];
-		var rows = [[1, "Shaw", "Tanzania"], [2, "Nelson", "Kazakhstan"], [3, "Garcia", "Madagascar"]];
+		var columns = ["ID", "Name", "Country", "Count"];
+		var rows = [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]];
 
 		var doc = new _jsPDF();
 		doc.setProperties({
@@ -48,17 +48,29 @@ var _tempFile = null;
 			keywords : 'one, two, three',
 			creator : 'Someone'
 		});
-
-		var imgSample1 = Ti.Filesystem.resourcesDirectory + 'image1.jpg';
-		doc.addImage(imgSample1, 'JPEG', 10, 20, 128, 96, 1280, 960, 738321);
-		
 		doc.autoTable(columns, rows);
 		
+		var QRWIDTH = 60;
+		var qrcode = new (require('qrcode'))('http://hamburger-appwerft.de',['H'],1);
+		var matrix = qrcode.getData();
+		console.log(qrcode.getInfo());
+		var R = QRWIDTH/qrcode.getSize();
+		doc.setDrawColor(1);
+		doc.setFillColor(1);
+		for (var row = 0; row < matrix.length; row++) {
+			for (var col = 0; col < matrix.length; col++) {
+				
+				if (matrix[row][col]) doc.rect(5 + row * R, 95 + col * R, R, R, 'F');
+			}
+		}
+		doc.setDrawColor(0);
+
+		doc.addImage(Ti.Filesystem.resourcesDirectory + 'image1.jpg', 'JPEG', 10, 180, 128, 96);
 		doc.setFont("helvetica");
 		doc.setFontType("bold");
 		doc.setFontSize(24);
-		doc.text(20, 180, 'Hello world');
-		doc.text(20, 190, 'This is jsPDF with image support\nusing Titanium..');
+		doc.text(20, 170, 'Hello world');
+		doc.text(20, 190, 'This is jsPDF with image support\nusing Titanium');
 
 		doc.addPage();
 		doc.rect(20, 120, 10, 10);
@@ -96,7 +108,7 @@ var _tempFile = null;
 				Ti.Android.currentActivity.startActivity(intent);
 			} catch(e) {
 				Ti.API.debug(e);
-				alert('You have no apps on your device that can open PDFs. Please download one from the marketplace.');
+				alert('You have no apps on your device that can open PDFs.');
 			}
 		} else {
 

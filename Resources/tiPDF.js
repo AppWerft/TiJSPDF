@@ -758,15 +758,11 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			, 'encoding': encoding
 			, 'metadata': {}
 		};
-
 		addToFontDictionary(fontKey, fontName, fontStyle);
-
 		events.publish('addFont', font)		;
-
 		return fontKey;
 	}
 	, addFonts = function() {
-
 		var HELVETICA = "helvetica"
 		, TIMES = "times"
 		, COURIER = "courier"
@@ -918,19 +914,13 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		return key;
 	}
 	, buildDocument = function() {
-		
 		outToPages = false ;// switches out() to content
 		content = [];
 		offsets = [];
-		
 		// putHeader()
 		out('%PDF-' + pdfVersion);
-		
 		putPages();
-		
 		putResources();
-
-		// Info
 		newObject();
 		out('<<');
 		putInfo();
@@ -960,9 +950,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		out('startxref');
 		out(o);
 		out('%%EOF');
-		
 		outToPages = true;
-		
 		return content.join('\n');
 	}
 	/**
@@ -1258,9 +1246,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			}
 
 		}
-
 		var newtext, str;
-
 		if (typeof text === 'string') {
 			str = pdfEscape(text, flags);
 		} else if (text instanceof Array) /* Array */{
@@ -1910,34 +1896,40 @@ var getJpegSize = function(filename) {
 	'use strict';
     var imgFile = Ti.Filesystem.getFile(filename);
     var imgData = imgFile.read();
-
+    var filesize = imgData.length;
 	var width, height;
-	// Verify we have a valid jpeg header 0xff,0xd8,0xff,0xe0,?,?,'J','F','I','F',0x00
-	if (!imgData.charCodeAt(0) === 0xff ||
-		!imgData.charCodeAt(1) === 0xd8 ||
-		!imgData.charCodeAt(2) === 0xff ||
-		!imgData.charCodeAt(3) === 0xe0 ||
-		!imgData.charCodeAt(6) === 'J'.charCodeAt(0) ||
-		!imgData.charCodeAt(7) === 'F'.charCodeAt(0) ||
-		!imgData.charCodeAt(8) === 'I'.charCodeAt(0) ||
-		!imgData.charCodeAt(9) === 'F'.charCodeAt(0) ||
-		!imgData.charCodeAt(10) === 0x00) {
+	var imageBuffer = Ti.createBuffer({ length: 1024*1024 });
+	Ti.Stream.createStream({ 
+		source: imgData, 
+		mode: Ti.Stream.MODE_READ
+	}).read(imageBuffer);
+	// Verify we have a valid jpeg header 255,216,255,224,?,?,74,70,73,70,0
+	if (!imageBuffer[0] === 255 ||
+		!imageBuffer[1] === 216 ||
+		!imageBuffer[2] === 255 ||
+		!imageBuffer[3] === 224 ||
+		!imageBuffer[6]===  74 || // J
+		!imageBuffer[7]===  70 || // F
+		!imageBuffer[8]===  73 || // I
+		!imageBuffer[9]===  70 || // F	
+		!imageBuffer[10]===  0 ) {
 			throw new Error('getJpegSize requires a binary jpeg file');
 	}
-	var blockLength = imgData.charCodeAt(4)*256 + imgData.charCodeAt(5);
+	var blockLength = imageBuffer[4]*256 + imageBuffer[5];
+	
 	var i = 4, len = imgData.length;
 	while ( i < len ) {
 		i += blockLength;
-		if (imgData.charCodeAt(i) !== 0xff) {
+		if (imageBuffer[i] !== 255) {
 			throw new Error('getJpegSize could not find the size of the image');
 		}
-		if (imgData.charCodeAt(i+1) === 0xc0) {
-			height = imgData.charCodeAt(i+5)*256 + imgData.charCodeAt(i+6);
-			width = imgData.charCodeAt(i+7)*256 + imgData.charCodeAt(i+8);
-			return [width, height];
+		if (imageBuffer[i+1] === 192) {
+			height = imageBuffer[i+5]*256 + imageBuffer[i+6];
+			width = imageBuffer[i+7]*256 + imageBuffer[i+8];
+			return {width:width, height:height,filesize:filesize};
 		} else {
 			i += 2;
-			blockLength = imgData.charCodeAt(i)*256 + imgData.charCodeAt(i+1);
+			blockLength = imageBuffer[i]*256 + imageBuffer[i+1];
 		}
 	}
 }
@@ -2007,11 +1999,12 @@ var getJpegSize = function(filename) {
 	}
 };
 
-jsPDFAPI.addImage = function(imageData, format, x, y, w, h, imageWidth, imageHeight, fileSize) {
+jsPDFAPI.addImage = function(imageData, format, x, y, w, h) {
 	'use strict';
 	if (format.toUpperCase() !== 'JPEG') {
 		throw new Error('addImage currently only supports format \'JPEG\', not \''+format+'\'');
 	}
+	var originaldimensions = getJpegSize(imageData);
 	var imageIndex
 	, images = this.internal.collections[namespace + 'images']
 	, coord = this.internal.getCoordinateString
@@ -2039,15 +2032,15 @@ jsPDFAPI.addImage = function(imageData, format, x, y, w, h, imageWidth, imageHei
 	var info = {
 		w: dims.w,
 		h: dims.h,
-		imageWidth: imageWidth,
-		imageHeight: imageHeight,
+		imageWidth: originaldimensions.width,
+		imageHeight: originaldimensions.height,
 		cs: 'DeviceRGB',
 		bpc: 8,
 		format: format,
 		f: 'DCTDecode',
 		i: imageIndex,
 		data: imageData,
-		fileSize: fileSize
+		fileSize: originaldimensions.filesize
 	};
 	images[imageIndex] = info;
 	if (!w && !h) {
@@ -2171,135 +2164,9 @@ MIT license.
  */
 
 ;(function(API) {
-'use strict'
+'use strict';
 
-/*
-# reference (Python) versions of 'compress' and 'uncompress'
-# only 'uncompress' function is featured lower as JavaScript
-# if you want to unit test "roundtrip", just transcribe the reference
-# 'compress' function from Python into JavaScript
 
-def compress(data):
-
-	keys =   '0123456789abcdef'
-	values = 'klmnopqrstuvwxyz'
-	mapping = dict(zip(keys, values))
-	vals = []
-	for key in data.keys():
-		value = data[key]
-		try:
-			keystring = hex(key)[2:]
-			keystring = keystring[:-1] + mapping[keystring[-1:]]
-		except:
-			keystring = key.join(["'","'"])
-			#print('Keystring is %s' % keystring)
-
-		try:
-			if value < 0:
-				valuestring = hex(value)[3:]
-				numberprefix = '-'
-			else:
-				valuestring = hex(value)[2:]
-				numberprefix = ''
-			valuestring = numberprefix + valuestring[:-1] + mapping[valuestring[-1:]]
-		except:
-			if type(value) == dict:
-				valuestring = compress(value)
-			else:
-				raise Exception("Don't know what to do with value type %s" % type(value))
-
-		vals.append(keystring+valuestring)
-	
-	return '{' + ''.join(vals) + '}'
-
-def uncompress(data):
-
-	decoded = '0123456789abcdef'
-	encoded = 'klmnopqrstuvwxyz'
-	mapping = dict(zip(encoded, decoded))
-
-	sign = +1
-	stringmode = False
-	stringparts = []
-
-	output = {}
-
-	activeobject = output
-	parentchain = []
-
-	keyparts = ''
-	valueparts = ''
-
-	key = None
-
-	ending = set(encoded)
-
-	i = 1
-	l = len(data) - 1 # stripping starting, ending {}
-	while i != l: # stripping {}
-		# -, {, }, ' are special.
-
-		ch = data[i]
-		i += 1
-
-		if ch == "'":
-			if stringmode:
-				# end of string mode
-				stringmode = False
-				key = ''.join(stringparts)
-			else:
-				# start of string mode
-				stringmode = True
-				stringparts = []
-		elif stringmode == True:
-			#print("Adding %s to stringpart" % ch)
-			stringparts.append(ch)
-
-		elif ch == '{':
-			# start of object
-			parentchain.append( [activeobject, key] )
-			activeobject = {}
-			key = None
-			#DEBUG = True
-		elif ch == '}':
-			# end of object
-			parent, key = parentchain.pop()
-			parent[key] = activeobject
-			key = None
-			activeobject = parent
-			#DEBUG = False
-
-		elif ch == '-':
-			sign = -1
-		else:
-			# must be number
-			if key == None:
-				#debug("In Key. It is '%s', ch is '%s'" % (keyparts, ch))
-				if ch in ending:
-					#debug("End of key")
-					keyparts += mapping[ch]
-					key = int(keyparts, 16) * sign
-					sign = +1
-					keyparts = ''
-				else:
-					keyparts += ch
-			else:
-				#debug("In value. It is '%s', ch is '%s'" % (valueparts, ch))
-				if ch in ending:
-					#debug("End of value")
-					valueparts += mapping[ch]
-					activeobject[key] = int(valueparts, 16) * sign
-					sign = +1
-					key = None
-					valueparts = ''
-				else:
-					valueparts += ch
-
-			#debug(activeobject)
-
-	return output
-
-*/
 
 /**
 Uncompresses data compressed into custom, base16-like format. 
@@ -2309,15 +2176,13 @@ Uncompresses data compressed into custom, base16-like format.
 @returns {Type}
 */
 var uncompress = function(data){
-
 	var decoded = '0123456789abcdef'
 	, encoded = 'klmnopqrstuvwxyz'
-	, mapping = {}
+	, mapping = {};
 
 	for (var i = 0; i < encoded.length; i++){
-		mapping[encoded[i]] = decoded[i]
+		mapping[encoded[i]] = decoded[i];
 	}
-
 	var undef
 	, output = {}
 	, sign = 1
@@ -2330,67 +2195,67 @@ var uncompress = function(data){
 	, valueparts = ''
 	, key // undef. will be Truthy when Key is resolved.
 	, datalen = data.length - 1 // stripping ending }
-	, ch
+	, ch;
 
-	i = 1 // stripping starting {
+	i = 1; // stripping starting {
 	
 	while (i != datalen){
 		// - { } ' are special.
 
-		ch = data[i]
-		i += 1
+		ch = data[i];
+		i += 1;
 
 		if (ch == "'"){
 			if (stringparts){
 				// end of string mode
-				key = stringparts.join('')
-				stringparts = undef				
+				key = stringparts.join('');
+				stringparts = undef		;		
 			} else {
 				// start of string mode
-				stringparts = []				
+				stringparts = []		;		
 			}
 		} else if (stringparts){
-			stringparts.push(ch)
+			stringparts.push(ch);
 		} else if (ch == '{'){
 			// start of object
-			parentchain.push( [activeobject, key] )
-			activeobject = {}
-			key = undef
+			parentchain.push( [activeobject, key] );
+			activeobject = {};
+			key = undef;
 		} else if (ch == '}'){
 			// end of object
-			parent_key_pair = parentchain.pop()
-			parent_key_pair[0][parent_key_pair[1]] = activeobject
-			key = undef
-			activeobject = parent_key_pair[0]
+			parent_key_pair = parentchain.pop();
+			parent_key_pair[0][parent_key_pair[1]] = activeobject;
+			key = undef;
+			activeobject = parent_key_pair[0];
 		} else if (ch == '-'){
-			sign = -1
+			sign = -1;
 		} else {
 			// must be number
 			if (key === undef) {
 				if (mapping.hasOwnProperty(ch)){
-					keyparts += mapping[ch]
-					key = parseInt(keyparts, 16) * sign
-					sign = +1
-					keyparts = ''
+					keyparts += mapping[ch];
+					key = parseInt(keyparts, 16) * sign;
+					sign = +1;
+					keyparts = '';
 				} else {
-					keyparts += ch
+					keyparts += ch;
 				}
 			} else {
 				if (mapping.hasOwnProperty(ch)){
-					valueparts += mapping[ch]
-					activeobject[key] = parseInt(valueparts, 16) * sign
-					sign = +1
-					key = undef
-					valueparts = ''
+					valueparts += mapping[ch];
+					activeobject[key] = parseInt(valueparts, 16) * sign;
+					sign = +1;
+					key = undef;
+					valueparts = '';
 				} else {
-					valueparts += ch					
+					valueparts += ch	;				
 				}
 			}
 		}
 	} // end while
 
-	return output
-}
+	return output;
+};
 
 // encoding = 'Unicode' 
 // NOT UTF8, NOT UTF16BE/LE, NOT UCS2BE/LE. NO clever BOM behavior
@@ -2490,11 +2355,11 @@ API.events.push([
 		, metrics
 		, unicode_section
 		, encoding = 'Unicode'
-		, encodingBlock
+		, encodingBlock;
 
 		for (fontID in fontManagementObjects.fonts){
 			if (fontManagementObjects.fonts.hasOwnProperty(fontID)) {
-				font = fontManagementObjects.fonts[fontID]
+				font = fontManagementObjects.fonts[fontID];
 
 				// // we only ship 'Unicode' mappings and metrics. No need for loop.
 				// // still, leaving this for the future.
@@ -2502,32 +2367,32 @@ API.events.push([
 				// for (encoding in fontMetrics){
 				// 	if (fontMetrics.hasOwnProperty(encoding)) {
 
-						metrics = fontMetrics[encoding][font.PostScriptName]
+						metrics = fontMetrics[encoding][font.PostScriptName];
 						if (metrics) {
 							if (font.metadata[encoding]) {
-								unicode_section = font.metadata[encoding]
+								unicode_section = font.metadata[encoding];
 							} else {
-								unicode_section = font.metadata[encoding] = {}
+								unicode_section = font.metadata[encoding] = {};
 							}
 
-							unicode_section.widths = metrics.widths
-							unicode_section.kerning = metrics.kerning
+							unicode_section.widths = metrics.widths;
+							unicode_section.kerning = metrics.kerning;
 						}
 				// 	}
 				// }
 				// for (encoding in encodings){
 				// 	if (encodings.hasOwnProperty(encoding)) {
-						encodingBlock = encodings[encoding][font.PostScriptName]
+						encodingBlock = encodings[encoding][font.PostScriptName];
 						if (encodingBlock) {
 							if (font.metadata[encoding]) {
-								unicode_section = font.metadata[encoding]
+								unicode_section = font.metadata[encoding];
 							} else {
-								unicode_section = font.metadata[encoding] = {}
+								unicode_section = font.metadata[encoding] = {};
 							}
 
-							unicode_section.encoding = encodingBlock
+							unicode_section.encoding = encodingBlock;
 							if (encodingBlock.codePages && encodingBlock.codePages.length) {
-								font.encoding = encodingBlock.codePages[0]
+								font.encoding = encodingBlock.codePages[0];
 							}
 						}
 				// 	}
@@ -2535,7 +2400,7 @@ API.events.push([
 			}
 		}
 	}
-]) // end of adding event handler
+]) ;// end of adding event handler
 
 })(jsPDF.API);
 
@@ -2715,17 +2580,17 @@ API.events.push([
 					// we just chop these to size. We do NOT insert hiphens
 					tmp = splitLongWord(word, widths_array, maxlen - (line_length + separator_length), maxlen);
 					// first line we add to existing line object
-					line.push(tmp.shift())// it's ok to have extra space indicator there
+					line.push(tmp.shift());// it's ok to have extra space indicator there
 					// last line we make into new line object
-					line = [tmp.pop()]
+					line = [tmp.pop()];
 					// lines in the middle we apped to lines object as whole lines
 					while (tmp.length) {
-						lines.push([tmp.shift()]) // single fragment occupies whole line
+						lines.push([tmp.shift()]); // single fragment occupies whole line
 					}
-					current_word_length = getArraySum(widths_array.slice(word.length - line[0].length))
+					current_word_length = getArraySum(widths_array.slice(word.length - line[0].length));
 				} else {
 					// just put it on a new line
-					line = [word]
+					line = [word];
 				}
 
 				// now we attach new line to lines
@@ -2768,12 +2633,10 @@ API.events.push([
 	 @returns {Array} with strings chopped to size.
 	 */
 	API.splitTextToSize = function(text, maxlen, options) {
-		'use strict'
-
+		'use strict';
 		if (!options) {
-			options = {}
+			options = {};
 		}
-
 		var fsize = options.fontSize || this.internal.getFontSize(),
 		    newOptions = (function(options) {
 			var widths = {
@@ -2829,7 +2692,6 @@ API.events.push([
 		// here it's in font units too (which is likely 'points')
 		// it can be negative (which makes the first line longer than maxLen)
 		newOptions.textIndent = options.textIndent ? options.textIndent * 1.0 * this.internal.scaleFactor / fsize : 0;
-
 		var i,
 		    l,
 		    output = [];
@@ -2935,7 +2797,7 @@ API.events.push([
 
             // Properties
             startY: false, // false indicates the margin.top value
-            margin: 40,
+            margin: 10,
             pageBreak: 'auto', // 'auto', 'avoid', 'always'
             tableWidth: 'auto', // number, 'auto', 'wrap'
 
@@ -2988,7 +2850,6 @@ API.events.push([
             doc.addPage();
             cursor.y = settings.margin.top;
         }
-
         applyStyles(userStyles);
         settings.beforePageContent(hooksData());
         if (settings.drawHeaderRow(table.headerRow, hooksData({row: table.headerRow})) !== false) {
@@ -2997,9 +2858,7 @@ API.events.push([
         applyStyles(userStyles);
         printRows();
         settings.afterPageContent(hooksData());
-
         applyStyles(userStyles);
-
         return this;
     };
 
