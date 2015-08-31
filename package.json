@@ -1,0 +1,28 @@
+{2
+  "name": "TiJSPDF",
+  "version": "1.0.0",
+  "description": "This extended version of JSPDF can embed images, tables and qrcodes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AppWerft/TiJSPDF.git"
+  },
+  "titaniumManifest": {
+    "guid": "30dc3aaa-cd6f-de94-f361-31c199531c90"
+  },
+   "dependencies": {
+	"de.appwerft.tiqrcode": "*"
+  },
+  "keywords": [
+    "PDF","Generation","QRcode","Images","Autotable"
+  ],
+  "author": "Rainer Schleevoigt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AppWerft/TiJSPDF/issues"
+  },
+  "homepage": "https://github.com/AppWerft/TiJSPDF"
+}

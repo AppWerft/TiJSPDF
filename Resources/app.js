@@ -1,4 +1,4 @@
-var _jsPDF = require('tiPDF');
+var _jsPDF = require('index');
 
 var _isAndroid = Ti.Platform.osname === 'android';
 var _tempFile = null;
@@ -25,8 +25,7 @@ var _tempFile = null;
 		console.log(doc.autoTableEndPosY());
 		function addQRCode(qroptions, x, y, width, color) {
 			var PADDING = 5;
-			console.log(qroptions);
-			var qrcode = new (require('qrcode'))(qroptions.data, qroptions.ecstrategy, qroptions.maskPattern, qroptions.version, qroptions.dataOnly, qroptions.maskTest);
+			var qrcode = new (require('de.appwerft.qrcode'))(qroptions.data, qroptions.ecstrategy, qroptions.maskPattern, qroptions.version, qroptions.dataOnly, qroptions.maskTest);
 			var code = qrcode.getData();
 			var R = width / qrcode.getSize();
 			doc.setDrawColor(color);
@@ -40,7 +39,7 @@ var _tempFile = null;
 				}
 			}
 		}
-		addQRCode({
+		doc.addQRCode({
 			data : '+',
 			ec : 'M'
 		}, 5, 100, 45);

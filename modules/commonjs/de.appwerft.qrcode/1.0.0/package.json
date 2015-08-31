@@ -1,0 +1,11 @@
+{
+  "name": "TiQRCode",
+  "version": "1.0.0",
+  "description": "Generates QRCode matrix. Output of this module can be use for QR code rendering. i.e. inside jspdf",
+  "titaniumManifest": {
+    "moduleid": "de.appwerft.qrcode",
+    "guid": "6aefde85-c80f-4a49-8843-bb6889c40280"
+  },
+  "_nativeDependencies": {},
+  "main": "de.appwerft.qrcode.js"
+}
