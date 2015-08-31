@@ -3390,7 +3390,8 @@ var Column = function (dataKey) {
     jsPDFAPI.addQRCode = function (qroptions, x, y, width, color) {
         'use strict';
      	var PADDING = 5;
-		var qrcode = new (require('de.appwerft.qrcode'))(qroptions.data, qroptions.ecstrategy, qroptions.maskPattern, qroptions.version, qroptions.dataOnly, qroptions.maskTest);
+     	var qrcodeModule = require('de.appwerft.qrcode');
+		var qrcode = new qrcodeModule(qroptions.data, qroptions.ecstrategy, qroptions.maskPattern, qroptions.version, qroptions.dataOnly, qroptions.maskTest);
 		var code = qrcode.getData();
 		var R = width / qrcode.getSize();
 		this.setDrawColor(color);

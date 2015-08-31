@@ -1,4 +1,4 @@
-{2
+{
   "name": "TiJSPDF",
   "version": "1.0.0",
   "description": "This extended version of JSPDF can embed images, tables and qrcodes.",
@@ -13,14 +13,17 @@
   "titaniumManifest": {
     "guid": "30dc3aaa-cd6f-de94-f361-31c199531c90"
   },
+  "engines": {
+    "titaniumsdk": ">= 3.3.0"
+  },
    "dependencies": {
-	"de.appwerft.tiqrcode": "*"
+		"de.appwerft.qrcode" : "*"
   },
   "keywords": [
-    "PDF","Generation","QRcode","Images","Autotable"
+    "PDF","Generation","QRcode","Images","Autotable","Titanium","Appcelerator","AppWerft"
   ],
   "author": "Rainer Schleevoigt",
-  "license": "ISC",
+  "license": "LGPL-2.1",
   "bugs": {
     "url": "https://github.com/AppWerft/TiJSPDF/issues"
   },
