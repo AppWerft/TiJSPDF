@@ -1,46 +1,30 @@
 String.prototype.bytes = function() {
 	'use strict';
-
 	var c;
-
 	var bytes = [];
 	var chars = this.toString().split('');
-
 	for ( c = 0; c < chars.length; c += 1) {
-
 		var charcode = chars[c].charCodeAt(0);
-
 		var multi = false;
-
 		// Json encoding uses UTF-16 like encod
 		if (charcode > 0xD800) {
 			c += 1;
-
 			multi = true;
-
 			var encoded = [charcode, chars[c].charCodeAt(0)];
-
 			var vh = encoded[0] - 0xD800;
 			var vl = encoded[1] - 0xDC00;
-
 			/* jshint bitwise: false */
 			var v = vh << 10;
 			v |= vl;
 			v += 0x10000;
 			/* jshint bitwise: true */
-
 			charcode = v;
 		}
-
 		var bt = [];
-
 		if (charcode > 0x7F) {// Multibyte UTF-8
-
 			var prefs = [0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC];
-
 			while (true) {
 				/* jshint bitwise: false */
-
 				if (multi === true && charcode === 0 || multi === false && charcode < prefs[0]) {
 					if (bt.length > 0) {
 						charcode |= prefs[bt.length];
@@ -1608,7 +1592,6 @@ DataAnalyzer.prototype.modes = {
 				return false;
 			}
 		}
-
 		return true;
 	},
 	kanji : function(data, self) {
@@ -3199,8 +3182,8 @@ Matrix.prototype.setLightModule = function(x, y, maskValue, data) {
  * @constructor
  */
 var QrCode = function(data, ecstrategy, maskPattern, version, dataOnly, maskTest) {
+	console.log(arguments);
 	'use strict';
-
 	data = data || '';
 	ecstrategy = ecstrategy || ['M'];
 	version = version || null;
@@ -3293,13 +3276,11 @@ var QrCode = function(data, ecstrategy, maskPattern, version, dataOnly, maskTest
 
 QrCode.prototype.getInfo = function() {
 	'use strict';
-
 	return this.info;
 };
 
 QrCode.prototype.getData = function() {
 	'use strict';
-
 	return this.matrix.getData();
 };
 
@@ -3308,4 +3289,4 @@ QrCode.prototype.getSize = function() {
 
 	return this.matrix.getSize();
 };
-module.exports = QrCode;
+module.exports = QrCode; 

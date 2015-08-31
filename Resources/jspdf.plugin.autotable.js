@@ -45,7 +45,7 @@
             header: {
                 textColor: 255,
                 fillColor: [41, 128, 185],
-                rowHeight: 23,
+                rowHeight: 21,
                 fontStyle: 'bold'
             },
             body: {},

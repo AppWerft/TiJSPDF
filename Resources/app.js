@@ -10,36 +10,9 @@ var _tempFile = null;
 		title : 'jsPDF Sample',
 		width : Ti.UI.FILL
 	});
-
-	var label = Ti.UI.createLabel({
-		color : '#000',
-		height : Ti.UI.SIZE,
-		left : 10,
-		right : 10,
-		text : 'Press the below button to demonstrate how to use jsPDF in Titanium.',
-		top : 10,
-		width : Ti.UI.FILL
-	});
-	win.add(label);
-
-	var btn = Ti.UI.createButton({
-		font : {
-			fontSize : 14
-		},
-		height : 50,
-		title : 'Run PDF Sample',
-		left : 20,
-		right : 20,
-		top : 30,
-		width : Ti.UI.FILL
-	});
-	win.add(btn);
-
-	btn.addEventListener('click', function(e) {
-
+	win.addEventListener('open', function(e) {
 		var columns = ["ID", "Name", "Country", "Count"];
 		var rows = [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]];
-
 		var doc = new _jsPDF();
 		doc.setProperties({
 			title : 'Title',
@@ -49,47 +22,50 @@ var _tempFile = null;
 			creator : 'Someone'
 		});
 		doc.autoTable(columns, rows);
-		
-		var QRWIDTH = 60;
-		var qrcode = new (require('qrcode'))('http://hamburger-appwerft.de',['H'],1);
-		var matrix = qrcode.getData();
-		console.log(qrcode.getInfo());
-		var R = QRWIDTH/qrcode.getSize();
-		doc.setDrawColor(1);
-		doc.setFillColor(1);
-		for (var row = 0; row < matrix.length; row++) {
-			for (var col = 0; col < matrix.length; col++) {
-				
-				if (matrix[row][col]) doc.rect(5 + row * R, 95 + col * R, R, R, 'F');
+		console.log(doc.autoTableEndPosY());
+		function addQRCode(qroptions, x, y, width, color) {
+			var PADDING = 5;
+			console.log(qroptions);
+			var qrcode = new (require('qrcode'))(qroptions.data, qroptions.ecstrategy, qroptions.maskPattern, qroptions.version, qroptions.dataOnly, qroptions.maskTest);
+			var code = qrcode.getData();
+			var R = width / qrcode.getSize();
+			doc.setDrawColor(color);
+			doc.setFillColor(color);
+			for (var r = 0; r < code.length; r += 1) {
+				for (var c = 0; c < code[r].length; c += 1) {
+					if (code[r][c] === 1) {
+						/*1% more size to cover the border of rect. */
+						doc.rect(PADDING + 5 + r * R, PADDING + 100 + c * R, R * 1.01, R * 1.01, 'F');
+					}
+				}
 			}
 		}
-		doc.setDrawColor(0);
+		addQRCode({
+			data : '+',
+			ec : 'M'
+		}, 5, 100, 45);
 
+		doc.setDrawColor(0);
 		doc.addImage(Ti.Filesystem.resourcesDirectory + 'image1.jpg', 'JPEG', 10, 180, 128, 96);
 		doc.setFont("helvetica");
 		doc.setFontType("bold");
 		doc.setFontSize(24);
 		doc.text(20, 170, 'Hello world');
 		doc.text(20, 190, 'This is jsPDF with image support\nusing Titanium');
-
 		doc.addPage();
 		doc.rect(20, 120, 10, 10);
 		// empty square
 		doc.rect(40, 120, 10, 10, 'F');
 		// filled square
-
 		var imgSample2 = Ti.Filesystem.resourcesDirectory + 'image2.jpg';
 		doc.addImage(imgSample2, 'JPEG', 70, 10, 100, 120, 410, 615, 67506);
-
 		doc.setFont("helvetica");
 		doc.setFontType("normal");
 		doc.setFontSize(24);
 		doc.text(20, 180, 'This is what I looked like trying to get');
 		doc.text(20, 190, 'the save function into the plugin system.');
 		doc.text(20, 200, 'It works now');
-
 		doc.text(20, 240, (new Date()).toString());
-
 		var timeStampName = new Date().getTime();
 		if (_tempFile != null) {
 			_tempFile.deleteFile();
