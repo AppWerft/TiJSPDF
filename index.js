@@ -3384,14 +3384,13 @@ var Column = function (dataKey) {
     };
 })(jsPDF.API);
 
-var qrcodeModule = require('de.appwerft.qrcode');
 
 ;(function(jsPDFAPI) {
 	'use strict';
     jsPDFAPI.addQRCode = function (qroptions, x, y, width, color) {
         'use strict';
      	var PADDING = 5;
-     	
+     	var qrcodeModule = require('de.appwerft.qrcode');
 		var qrcode = new qrcodeModule(qroptions.data, qroptions.ecstrategy, qroptions.maskPattern, qroptions.version, qroptions.dataOnly, qroptions.maskTest);
 		var code = qrcode.getData();
 		var R = width / qrcode.getSize();

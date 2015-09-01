@@ -16,8 +16,8 @@
   "engines": {
     "titaniumsdk": ">= 3.3.0"
   },
-   "dependencies": {
-		"de.appwerft.qrcode" : "*"
+   "nativeDependencies": {
+    "de.appwerft.qrcode" : "*"
   },
   "keywords": [
     "PDF","Generation","QRcode","Images","Autotable","Titanium","Appcelerator","AppWerft"
