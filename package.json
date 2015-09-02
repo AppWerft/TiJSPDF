@@ -13,7 +13,7 @@
   "titaniumManifest": {
    "name": "Ti.JSPDF",
    "moduleid" : "de.appwerft.jspdf",
-    "guid": "30dc3aaa-cd6f-de94-f361-31c199531c90"
+   "guid": "30dc3aaa-cd6f-de94-f361-31c199531c90"
   },
   "engines": {
     "titaniumsdk": ">= 3.3.0"
