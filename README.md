@@ -1,5 +1,8 @@
 ### Appcelerator Titanium - Image, Table and QRcode support in jsPDF ###
 
+
+![](http://i.imgur.com/M8iAtVi.png)
+
 This is an example app with jsPDF image support plug-in that allows you to use the jsPDF library in Titanium with images, these are currently not currently available with jsPDF when used with Titanium normally.
 Additional you can use tables and QR code inside PDF
 
