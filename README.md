@@ -54,7 +54,11 @@ doc.addQRCode({
 ```javascript
 var columns = ["ID", "Name", "Country", "Count"];
 var rows = [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]];
-doc.autoTable(columns, rows);
+doc.addAutoTable({
+    headers:columns,
+    data: rows,
+    options:{}
+});
 
 ```
 
@@ -62,8 +66,6 @@ doc.autoTable(columns, rows);
 ### Example Code ###
 
 ```javascript
-var columns = ["ID", "Name", "Country", "Count"];
-var rows = [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]];
 var doc = new _jsPDF();
 doc.setProperties({
     title : 'Title',
@@ -72,7 +74,10 @@ doc.setProperties({
     keywords : 'one, two, three',
     creator : 'Someone'
 });
-doc.autoTable(columns, rows);
+doc.addAutoTable({
+    headers:["ID", "Name", "Country", "Count"], 
+    data : [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]]
+});
 console.log(doc.autoTableEndPosY());
 doc.addQRCode({
     data : '+',

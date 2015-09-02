@@ -2708,7 +2708,7 @@ API.events.push([
 
 
 
-/* ++++ PLUGIN autotable */
+/* ++++ PLUGIN addAutotable */
 /**
  * jsPDF AutoTable plugin
  * Copyright (c) 2014 Simon Bengtsson, https://github.com/someatoms/jsPDF-AutoTable
@@ -2820,7 +2820,10 @@ API.events.push([
      * @param {Object[][]|String[][]} data Either as an array of objects or array of strings
      * @param {Object} [options={}] Options that will override the default ones
      */
-    API.autoTable = function (headers, data, options) {
+    API.addAutoTable = function (args) {
+    	var headers = args.headers || [];
+    	var data=args.data || [[]];
+    	var options = args.options|| {};
         doc = this;
         settings = initOptions(options || {});
         pageCount = 1;
