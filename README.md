@@ -43,10 +43,14 @@ doc.addImage(filename, format, x, y, w, h, imageWidth, imageHeight, imageSize);
 ### addQRCode Method ###
 ```javascript
 doc.addQRCode({
-    data : 'http://github.com/',
-    ec : 'M'
-    }, 5, 100, 45
-);
+    qr : {
+        data : 'http://github.com/',
+        ec : 'M'
+    }, 
+    x : 5, 
+    y : 100, 
+    width : 45
+});
 
 ```
 
@@ -93,9 +97,14 @@ doc.addAutoTable({
 });
 console.log(doc.autoTableEndPosY());
 doc.addQRCode({
-    data : '+',
-    ec : 'M'
-    }, 5, 100, 45);
+    qr : {
+        data : 'http://github.com/',
+        ec : 'M'
+    }, 
+    x : 5, 
+    y : 100, 
+    width : 45
+});
 
 doc.setDrawColor(0);
 doc.addImage(Ti.Filesystem.resourcesDirectory + 'image1.jpg', 'JPEG', 10, 180, 128, 96);

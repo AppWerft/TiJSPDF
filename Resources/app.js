@@ -11,8 +11,7 @@ var _tempFile = null;
 		width : Ti.UI.FILL
 	});
 	win.addEventListener('open', function(e) {
-		var columns = ["ID", "Name", "Country", "Count"];
-		var rows = [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]];
+		
 		var doc = new _jsPDF();
 		doc.setProperties({
 			title : 'Title',
@@ -21,7 +20,10 @@ var _tempFile = null;
 			keywords : 'one, two, three',
 			creator : 'Someone'
 		});
-		doc.autoTable(columns, rows);
+		doc.addAutoTable({
+			headers : ["ID", "Name", "Country", "Count"],
+			data : [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]]
+		});
 		console.log(doc.autoTableEndPosY());
 		doc.addQRCode({
 			data : '+',
