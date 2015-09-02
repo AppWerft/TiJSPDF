@@ -50,6 +50,14 @@ doc.addQRCode({
 
 ```
 
+### autoTable method
+```javascript
+var columns = ["ID", "Name", "Country", "Count"];
+var rows = [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]];
+doc.autoTable(columns, rows);
+
+```
+
 
 ### Example Code ###
 
