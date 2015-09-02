@@ -54,10 +54,23 @@ doc.addQRCode({
 ```javascript
 var columns = ["ID", "Name", "Country", "Count"];
 var rows = [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]];
+var options = { // Styling
+    theme: 'striped', // 'striped', 'grid' or 'plain'
+    styles: {},
+    headerStyles: {},
+    bodyStyles: {},
+    alternateRowStyles: {},
+    columnStyles: {},
+    // Properties
+    startY: false, // false indicates the margin.top value
+    margin: 10,
+    pageBreak: 'auto', // 'auto', 'avoid', 'always'
+    tableWidth: 'auto', // number, 'auto', 'wrap'
+};
 doc.addAutoTable({
     headers:columns,
     data: rows,
-    options:{}
+    options : options
 });
 
 ```
