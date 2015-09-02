@@ -35,8 +35,18 @@ doc.addImage(filename, format, x, y, w, h, imageWidth, imageHeight, imageSize);
    
 */
 
+```
+
+### addQRCode Method ###
+```javascript
+doc.addQRCode({
+    data : 'http://github.com/',
+    ec : 'M'
+    }, 5, 100, 45
+);
 
 ```
+
 
 ### Example Code ###
 
