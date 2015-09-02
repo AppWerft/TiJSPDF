@@ -23,22 +23,6 @@ var _tempFile = null;
 		});
 		doc.autoTable(columns, rows);
 		console.log(doc.autoTableEndPosY());
-		function addQRCode(qroptions, x, y, width, color) {
-			var PADDING = 5;
-			var qrcode = new (require('de.appwerft.qrcode'))(qroptions.data, qroptions.ecstrategy, qroptions.maskPattern, qroptions.version, qroptions.dataOnly, qroptions.maskTest);
-			var code = qrcode.getData();
-			var R = width / qrcode.getSize();
-			doc.setDrawColor(color);
-			doc.setFillColor(color);
-			for (var r = 0; r < code.length; r += 1) {
-				for (var c = 0; c < code[r].length; c += 1) {
-					if (code[r][c] === 1) {
-						/*1% more size to cover the border of rect. */
-						doc.rect(PADDING + 5 + r * R, PADDING + 100 + c * R, R * 1.01, R * 1.01, 'F');
-					}
-				}
-			}
-		}
 		doc.addQRCode({
 			data : '+',
 			ec : 'M'
