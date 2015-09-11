@@ -1,289 +1,3 @@
-function sprintf( ) {
-    // Return a formatted string  
-    // 
-    // version: 903.3016
-    // discuss at: http://phpjs.org/functions/sprintf
-    // +   original by: Ash Searle (http://hexmen.com/blog/)
-    // + namespaced by: Michael White (http://getsprink.com)
-    // +    tweaked by: Jack
-    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +      input by: Paulo Ricardo F. Santos
-    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +      input by: Brett Zamir (http://brettz9.blogspot.com)
-    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // *     example 1: sprintf("%01.2f", 123.1);
-    // *     returns 1: 123.10
-    // *     example 2: sprintf("[%10s]", 'monkey');
-    // *     returns 2: '[    monkey]'
-    // *     example 3: sprintf("[%'#10s]", 'monkey');
-    // *     returns 3: '[####monkey]'
-    var regex = /%%|%(\d+\$)?([-+\'#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
-    var a = arguments, i = 0, format = a[i++];
-
-    // pad()
-    var pad = function(str, len, chr, leftJustify) {
-        if (!chr) chr = ' ';
-        var padding = (str.length >= len) ? '' : Array(1 + len - str.length >>> 0).join(chr);
-        return leftJustify ? str + padding : padding + str;
-    };
-
-    // justify()
-    var justify = function(value, prefix, leftJustify, minWidth, zeroPad, customPadChar) {
-        var diff = minWidth - value.length;
-        if (diff > 0) {
-            if (leftJustify || !zeroPad) {
-                value = pad(value, minWidth, customPadChar, leftJustify);
-            } else {
-                value = value.slice(0, prefix.length) + pad('', diff, '0', true) + value.slice(prefix.length);
-            }
-        }
-        return value;
-    };
-
-    // formatBaseX()
-    var formatBaseX = function(value, base, prefix, leftJustify, minWidth, precision, zeroPad) {
-        // Note: casts negative numbers to positive ones
-        var number = value >>> 0;
-        prefix = prefix && number && {'2': '0b', '8': '0', '16': '0x'}[base] || '';
-        value = prefix + pad(number.toString(base), precision || 0, '0', false);
-        return justify(value, prefix, leftJustify, minWidth, zeroPad);
-    };
-
-    // formatString()
-    var formatString = function(value, leftJustify, minWidth, precision, zeroPad, customPadChar) {
-        if (precision != null) {
-            value = value.slice(0, precision);
-        }
-        return justify(value, '', leftJustify, minWidth, zeroPad, customPadChar);
-    };
-
-    // doFormat()
-    var doFormat = function(substring, valueIndex, flags, minWidth, _, precision, type) {
-        var number;
-        var prefix;
-        var method;
-        var textTransform;
-        var value;
-
-        if (substring == '%%') return '%';
-
-        // parse flags
-        var leftJustify = false, positivePrefix = '', zeroPad = false, prefixBaseX = false, customPadChar = ' ';
-        var flagsl = flags.length;
-        for (var j = 0; flags && j < flagsl; j++) switch (flags.charAt(j)) {
-            case ' ': positivePrefix = ' '; break;
-            case '+': positivePrefix = '+'; break;
-            case '-': leftJustify = true; break;
-            case "'": customPadChar = flags.charAt(j+1); break;
-            case '0': zeroPad = true; break;
-            case '#': prefixBaseX = true; break;
-        }
-
-        // parameters may be null, undefined, empty-string or real valued
-        // we want to ignore null, undefined and empty-string values
-        if (!minWidth) {
-            minWidth = 0;
-        } else if (minWidth == '*') {
-            minWidth = +a[i++];
-        } else if (minWidth.charAt(0) == '*') {
-            minWidth = +a[minWidth.slice(1, -1)];
-        } else {
-            minWidth = +minWidth;
-        }
-
-        // Note: undocumented perl feature:
-        if (minWidth < 0) {
-            minWidth = -minWidth;
-            leftJustify = true;
-        }
-
-        if (!isFinite(minWidth)) {
-            throw new Error('sprintf: (minimum-)width must be finite');
-        }
-
-        if (!precision) {
-            precision = 'fFeE'.indexOf(type) > -1 ? 6 : (type == 'd') ? 0 : void(0);
-        } else if (precision == '*') {
-            precision = +a[i++];
-        } else if (precision.charAt(0) == '*') {
-            precision = +a[precision.slice(1, -1)];
-        } else {
-            precision = +precision;
-        }
-
-        // grab value using valueIndex if required?
-        value = valueIndex ? a[valueIndex.slice(0, -1)] : a[i++];
-
-        switch (type) {
-            case 's': return formatString(String(value), leftJustify, minWidth, precision, zeroPad, customPadChar);
-            case 'c': return formatString(String.fromCharCode(+value), leftJustify, minWidth, precision, zeroPad);
-            case 'b': return formatBaseX(value, 2, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
-            case 'o': return formatBaseX(value, 8, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
-            case 'x': return formatBaseX(value, 16, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
-            case 'X': return formatBaseX(value, 16, prefixBaseX, leftJustify, minWidth, precision, zeroPad).toUpperCase();
-            case 'u': return formatBaseX(value, 10, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
-            case 'i':
-            case 'd': {
-                number = parseInt(+value);
-                prefix = number < 0 ? '-' : positivePrefix;
-                value = prefix + pad(String(Math.abs(number)), precision, '0', false);
-                return justify(value, prefix, leftJustify, minWidth, zeroPad);
-            }
-            case 'e':
-            case 'E':
-            case 'f':
-            case 'F':
-            case 'g':
-            case 'G': {
-                number = +value;
-                prefix = number < 0 ? '-' : positivePrefix;
-                method = ['toExponential', 'toFixed', 'toPrecision']['efg'.indexOf(type.toLowerCase())];
-                textTransform = ['toString', 'toUpperCase']['eEfFgG'.indexOf(type) % 2];
-                value = prefix + Math.abs(number)[method](precision);
-                return justify(value, prefix, leftJustify, minWidth, zeroPad)[textTransform]();
-            }
-            default: return substring;
-        }
-    };
-
-    return format.replace(regex, doFormat);
-}
-
-/**
-*
-*  Base64 encode / decode
-*  http://www.webtoolkit.info/
-*
-**/
-
-var Base64 = {
-
-	// private property
-	_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-
-	// public method for encoding
-	encode : function (input) {
-		var output = "";
-		var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-		var i = 0;
-
-		input = Base64._utf8_encode(input);
-
-		while (i < input.length) {
-
-			chr1 = input.charCodeAt(i++);
-			chr2 = input.charCodeAt(i++);
-			chr3 = input.charCodeAt(i++);
-
-			enc1 = chr1 >> 2;
-			enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-			enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-			enc4 = chr3 & 63;
-
-			if (isNaN(chr2)) {
-				enc3 = enc4 = 64;
-			} else if (isNaN(chr3)) {
-				enc4 = 64;
-			}
-
-			output = output +
-			this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-			this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-
-		}
-
-		return output;
-	},
-
-	// public method for decoding
-	decode : function (input) {
-		var output = "";
-		var chr1, chr2, chr3;
-		var enc1, enc2, enc3, enc4;
-		var i = 0;
-
-		input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-
-		while (i < input.length) {
-
-			enc1 = this._keyStr.indexOf(input.charAt(i++));
-			enc2 = this._keyStr.indexOf(input.charAt(i++));
-			enc3 = this._keyStr.indexOf(input.charAt(i++));
-			enc4 = this._keyStr.indexOf(input.charAt(i++));
-
-			chr1 = (enc1 << 2) | (enc2 >> 4);
-			chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-			chr3 = ((enc3 & 3) << 6) | enc4;
-
-			output = output + String.fromCharCode(chr1);
-
-			if (enc3 != 64) {
-				output = output + String.fromCharCode(chr2);
-			}
-			if (enc4 != 64) {
-				output = output + String.fromCharCode(chr3);
-			}
-
-		}
-
-		output = Base64._utf8_decode(output);
-
-		return output;
-
-	},
-
-	// private method for UTF-8 encoding
-	_utf8_encode : function (string) {
-		string = string.replace(/\r\n/g,"\n");
-		var utftext = "";
-
-		for (var n = 0; n < string.length; n++) {
-
-			var c = string.charCodeAt(n);
-
-			if (c < 128) {
-				utftext += String.fromCharCode(c);
-			}
-			else if((c > 127) && (c < 2048)) {
-				utftext += String.fromCharCode((c >> 6) | 192);
-				utftext += String.fromCharCode((c & 63) | 128);
-			}
-			else {
-				utftext += String.fromCharCode((c >> 12) | 224);
-				utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-				utftext += String.fromCharCode((c & 63) | 128);
-			}
-
-		}
-
-		return utftext;
-	},
-	// private method for UTF-8 decoding
-	_utf8_decode : function (utftext) {
-		var string = "";
-		var i = 0;
-		var c = c1 = c2 = 0;
-		while ( i < utftext.length ) {
-			c = utftext.charCodeAt(i);
-			if (c < 128) {
-				string += String.fromCharCode(c);
-				i++;
-			}
-			else if((c > 191) && (c < 224)) {
-				c2 = utftext.charCodeAt(i+1);
-				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-				i += 2;
-			}
-			else {
-				c2 = utftext.charCodeAt(i+1);
-				c3 = utftext.charCodeAt(i+2);
-				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-				i += 3;
-			}
-		}
-		return string;
-	}
-};
 
 /** @preserve jsPDF ( ${buildDate} ${commitID} )
 Copyright (c) 2010 James Hall, https://github.com/MrRio/jsPDF
@@ -329,91 +43,6 @@ var jsPDF = (function() {
 
 // this will run on <=IE9, possibly some niche browsers
 // new webkit-based, FireFox, IE10 already have native version of this.
-if (typeof btoa === 'undefined') {
-	var btoa = function(data) {
-		// DO NOT ADD UTF8 ENCODING CODE HERE!!!!
-
-		// UTF8 encoding encodes bytes over char code 128
-		// and, essentially, turns an 8-bit binary streams
-		// (that base64 can deal with) into 7-bit binary streams. 
-		// (by default server does not know that and does not recode the data back to 8bit)
-		// You destroy your data.
-
-		// binary streams like jpeg image data etc, while stored in JavaScript strings,
-		// (which are 16bit arrays) are in 8bit format already.
-		// You do NOT need to char-encode that before base64 encoding.
-
-		// if you, by act of fate
-		// have string which has individual characters with code
-		// above 255 (pure unicode chars), encode that BEFORE you base64 here.
-		// you can use absolutely any approch there, as long as in the end,
-		// base64 gets an 8bit (char codes 0 - 255) stream.
-		// when you get it on the server after un-base64, you must 
-		// UNencode it too, to get back to 16, 32bit or whatever original bin stream.
-
-		// Note, Yes, JavaScript strings are, in most cases UCS-2 - 
-		// 16-bit character arrays. This does not mean, however,
-		// that you always have to UTF8 it before base64.
-		// it means that if you have actual characters anywhere in
-		// that string that have char code above 255, you need to
-		// recode *entire* string from 16-bit (or 32bit) to 8-bit array.
-		// You can do binary split to UTF16 (BE or LE)
-		// you can do utf8, you can split the thing by hand and prepend BOM to it,
-		// but whatever you do, make sure you mirror the opposite on
-		// the server. If server does not expect to post-process un-base64
-		// 8-bit binary stream, think very very hard about messing around with encoding.
-
-		// so, long story short:
-		// DO NOT ADD UTF8 ENCODING CODE HERE!!!!
-		
-		/* @preserve
-		====================================================================
-		base64 encoder
-		MIT, GPL
-	
-		version: 1109.2015
-		discuss at: http://phpjs.org/functions/base64_encode
-		+   original by: Tyler Akins (http://rumkin.com)
-		+   improved by: Bayron Guevara
-		+   improved by: Thunder.m
-		+   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-		+   bugfixed by: Pellentesque Malesuada
-		+   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-		+   improved by: Rafal Kukawski (http://kukawski.pl)
-		+   			 Daniel Dotsenko, Willow Systems Corp, willow-systems.com
-		====================================================================
-		*/
-		
-		var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-		, b64a = b64.split('')
-		, o1, o2, o3, h1, h2, h3, h4, bits, i = 0,
-		ac = 0,
-		enc = "",
-		tmp_arr = [];
-	 
-		do { // pack three octets into four hexets
-			o1 = data.charCodeAt(i++);
-			o2 = data.charCodeAt(i++);
-			o3 = data.charCodeAt(i++);
-	 
-			bits = o1 << 16 | o2 << 8 | o3;
-
-			h1 = bits >> 18 & 0x3f;
-			h2 = bits >> 12 & 0x3f;
-			h3 = bits >> 6 & 0x3f;
-			h4 = bits & 0x3f;
-	 
-			// use hexets to index into b64, and append result to encoded string
-			tmp_arr[ac++] = b64a[h1] + b64a[h2] + b64a[h3] + b64a[h4];
-		} while (i < data.length);
-
-		enc = tmp_arr.join('');
-		var r = data.length % 3;
-		return (r ? enc.slice(0, r - 3) : enc) + '==='.slice(r || 3);
-
-		// end of base64 encoder MIT, GPL
-	};
-};
 
 var getObjectLength = typeof Object.keys === 'function' ?
 	function(object){
@@ -1032,17 +661,14 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 			fonts[activeFontKey].metadata[sourceEncoding].encoding
 		) {
 			encodingBlock = fonts[activeFontKey].metadata[sourceEncoding].encoding;
-			
 			// each font has default encoding. Some have it clearly defined.
 			if (!outputEncoding && fonts[activeFontKey].encoding) {
 				outputEncoding = fonts[activeFontKey].encoding;
 			}
-
 			// Hmmm, the above did not work? Let's try again, in different place.
 			if (!outputEncoding && encodingBlock.codePages) {
 				outputEncoding = encodingBlock.codePages[0]; // let's say, first one is the default
 			}
-
 			if (typeof outputEncoding === 'string') {
 				outputEncoding = encodingBlock[outputEncoding];
 			}
@@ -1054,11 +680,13 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 				newtext = [];
 				for (i = 0, l = text.length; i < l; i++) {
 					ch = outputEncoding[text.charCodeAt(i)];
+					// Umlaute
 					if (ch) {
 						newtext.push(
 							String.fromCharCode(ch)
 						);
 					} else {
+						// ASCII
 						newtext.push(
 							text[i]
 						);
@@ -1073,11 +701,12 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 				text = newtext.join('');
 			}
 		}
-
+		
 		i = text.length;
 		// isUnicode may be set to false above. Hence the triple-equal to undefined
 		while (isUnicode === undef && i !== 0){
 			if ( text.charCodeAt(i - 1) >> 8 /* more than 255 */ ) {
+				console.log('Warning: was Unicode');
 				isUnicode = true;
 			}
 			;i--;
@@ -1109,7 +738,8 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		// 16bit chars to (USC-2-BE) 2-bytes per char + BOM streams we ensure that entire PDF
 		// is still parseable.
 		// This will allow immediate support for unicode in document properties strings.
-		return to8bitStream(text, flags).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+		var bitstream = to8bitStream(text, flags);
+		return bitstream.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
 	}
 	, getStyle = function(style){
 		// see Path-Painting Operators of PDF spec
@@ -1143,7 +773,6 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		*/
 		, 'getFont': function(){ return fonts[getFont.apply(API, arguments)]; }
 		, 'getFontSize': function() { return activeFontSize;	}
-		, 'btoa': btoa
 		, 'write': function(string1, string2, string3, etc){
 			out(
 				arguments.length === 1? 
@@ -1209,21 +838,7 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	 	*/
 		
 	 	var undef;
-		// Pre-August-2012 the order of arguments was function(x, y, text, flags)
-		// in effort to make all calls have similar signature like 
-		//   function(data, coordinates... , miscellaneous)
-		// this method had its args flipped.
-		// code below allows backward compatibility with old arg order.
-		var _first, _second, _third;
-		if (typeof arguments[0] === 'number') {
-			_first = arguments[2];
-			_second = arguments[0];
-			_third = arguments[1];
-
-			text = _first ;
-			x = _second ;
-			y = _third;
-		}
+		
 
 		// If there are any newlines in text, we assume
 		// the user wanted to print multiple lines, so break the
@@ -1236,15 +851,12 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		if (typeof flags === 'undefined') {
 			flags = {'noBOM':true,'autoencode':true};
 		} else {
-
 			if (flags.noBOM === undef) {
 				flags.noBOM = true;
 			}
-
 			if (flags.autoencode === undef) {
 				flags.autoencode = true;
 			}
-
 		}
 		var newtext, str;
 		if (typeof text === 'string') {
@@ -1268,14 +880,20 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 		// Thus, there is NO useful, *reliable* concept of "default" font for a page. 
 		// The fact that "default" (reuse font used before) font worked before in basic cases is an accident
 		// - readers dealing smartly with brokenness of jsPDF's markup.
+		console.log('>>>>>>>>>>');
+		var hex = '';
+    	for(var i=0;i<str.length;i++) {
+      		  hex += ' '+ str.charCodeAt(i).toString(16);
+   		 }	;
+    	console.log(': '+str + ' = hex:' + hex);	
+		console.log('>>>>>>>>>>');
 		out( 
 			'BT\n/' +
 			activeFontKey + ' ' + activeFontSize + ' Tf\n' + // font face, style, size
 			activeFontSize + ' TL\n' + // line spacing
 			textColor + 
 			'\n' + f2(x * k) + ' ' + f2((pageHeight - y) * k) + ' Td\n(' + 
-			str +
-			') Tj\nET'
+			str + ') Tj\nET'
 		);
 		return this;
 	};
@@ -1760,19 +1378,8 @@ function jsPDF(/** String */ orientation, /** String */ unit, /** String */ form
 	@methodOf jsPDF#
 	@name output
 	*/
-	API.output = function(type, options) {
-		var undef;
-		switch (type){
-			case undef: return buildDocument() ;
-			case 'datauristring':
-			case 'dataurlstring':
-				return 'data:application/pdf;base64,' + btoa(buildDocument());
-			case 'datauri':
-			case 'dataurl':
-				document.location.href = 'data:application/pdf;base64,' + btoa(buildDocument()); break;
-			default: throw new Error('Output type "'+type+'" is not supported.') ;
-		}
-		// @TODO: Add different output options
+	API.output = function() {
+		buildDocument() ;
 	};
 
 	// applying plugins (more methods) ON TOP of built-in API.
@@ -2115,7 +1722,6 @@ Copyright (c) 2012 https://github.com/siefkenj/
         }
         var res = this.output();
         var parts = res.split(/#image\s([^#]*)#/gim);
-        
         var intNode = 0, intNodes = parts.length, imgFile;
         for (intNode = 0; intNode < intNodes; intNode = intNode + 1) {
             switch (intNode % 2 ? false : true) {
@@ -2273,8 +1879,8 @@ var uncompress = function(data){
 var encodingBlock = {
 	'codePages': ['WinAnsiEncoding']
 	, 'WinAnsiEncoding': uncompress("{19m8n201n9q201o9r201s9l201t9m201u8m201w9n201x9o201y8o202k8q202l8r202m9p202q8p20aw8k203k8t203t8v203u9v2cq8s212m9t15m8w15n9w2dw9s16k8u16l9u17s9z17x8y17y9y}")
-}
-, encodings = {'Unicode':{
+};
+var encodings = {'Unicode':{
 	'Courier': encodingBlock
 	, 'Courier-Bold': encodingBlock
 	, 'Courier-BoldOblique': encodingBlock
