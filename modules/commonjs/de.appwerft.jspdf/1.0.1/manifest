@@ -1,4 +1,4 @@
-version: 1.0.0
+version: 1.0.1
 description: This extended version of JSPDF can embed images, tables and qrcodes.
 author: Rainer Schleevoigt
 license: LGPL-2.1

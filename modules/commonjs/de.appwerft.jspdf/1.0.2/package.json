@@ -1,6 +1,6 @@
 {
   "name": "Ti.JSPDF",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "This extended version of JSPDF can embed images, tables and qrcodes.",
   "main": "de.appwerft.jspdf.js",
   "scripts": {
@@ -19,7 +19,8 @@
     "titaniumsdk": ">= 3.3.0"
   },
   "nativeDependencies": {
-    "de.appwerft.qrcode": "*"
+    "de.appwerft.qrcode": "*",
+    "ti.imagefactory": "*"
   },
   "keywords": [
     "PDF",
@@ -38,6 +39,7 @@
   },
   "homepage": "https://github.com/AppWerft/TiJSPDF",
   "_nativeDependencies": {
-    "de.appwerft.qrcode": "*"
+    "de.appwerft.qrcode": "*",
+    "ti.imagefactory": "*"
   }
 }
