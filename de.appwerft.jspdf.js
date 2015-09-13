@@ -2353,7 +2353,8 @@ var jsPDF = (function(global) {
 
 ;(function(jsPDFAPI) {
 	'use strict';
-	var toBlob = function(jsString) {
+	// in IOS this works, but not with Android
+	var toBlobIOS = function(jsString) {
 			var data = jsString, len = data.length,
 				ab = new ArrayBuffer(len), u8 = new Uint8Array(ab);
 
@@ -2366,6 +2367,17 @@ var jsPDF = (function(global) {
             var idx = 0;
 			while(len--){ 
 				buffer.fill(u8[idx],idx,len);
+				idx++;
+			}
+			return buffer.toBlob();
+		
+	}
+	var toBlob = function(jsString) {
+			var data = jsString, len = data.length;
+            var buffer = Ti.createBuffer({length:len});
+            var idx = 0;
+			while(len--){ 
+				buffer.fill(data.charCodeAt(idx),idx,len);
 				idx++;
 			}
 			return buffer.toBlob();
