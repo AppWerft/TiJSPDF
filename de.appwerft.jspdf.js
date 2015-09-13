@@ -3107,7 +3107,11 @@ var jsPDF = (function(global) {
 	 * @param {Object} [options={}] Options that will override the default ones
 	 */
 	API.addAutoTable = function (args) {
+<<<<<<< HEAD
 		var headers = args.headers || [];
+=======
+		var headers = args.headers || [];
+>>>>>>> a573bd5f8967a12bbd8643f98fdde50b34189e88
 		var data=args.data || [[]];
 		var options = args.options|| {};
 		doc = this;
