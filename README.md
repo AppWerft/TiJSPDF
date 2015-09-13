@@ -3,10 +3,9 @@
 
 ![](http://i.imgur.com/M8iAtVi.png)
 
-This is an example app with jsPDF image support plug-in that allows you to use the jsPDF library in Titanium with images, these are currently not currently available with jsPDF when used with Titanium normally.
+This is a extendet version of JSPDF with support of WinANSI. You can write i.e. german umlaute
 Additional you can use tables and QR code inside PDF
 
-This version is currently considered pre-release.
 
 Doku:
 https://mrrio.github.io/jsPDF/doc/symbols/jsPDF.html

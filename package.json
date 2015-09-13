@@ -1,7 +1,7 @@
 {
   "name": "Ti.JSPDF",
-  "version": "1.0.3",
-  "description": "This extended version of JSPDF can embed images, tables and qrcodes.",
+  "version": "1.0.4",
+  "description": "This extended version of JSPDF can show text in WinANSI, embed images, auto tables and qrcodes.",
   "main": "de.appwerft.jspdf.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
