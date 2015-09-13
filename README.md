@@ -1,4 +1,4 @@
-### Appcelerator Titanium - Image, Table and QRcode support in jsPDF ### ![](https://camo.githubusercontent.com/aab7a80c6cb487e82736414b2d9be1e969a3672e/687474703a2f2f676974742e696f2f62616467652e706e67)
+###Appcelerator Titanium - Image, Table and QRcode support in jsPDF### ![](https://camo.githubusercontent.com/aab7a80c6cb487e82736414b2d9be1e969a3672e/687474703a2f2f676974742e696f2f62616467652e706e67)
 
 
 ![](http://i.imgur.com/ctaRBc1.png)
