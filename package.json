@@ -2,7 +2,7 @@
   "name": "Ti.JSPDF",
   "version": "1.0.4",
   "description": "This extended version of JSPDF can show text in WinANSI, embed images, auto tables and qrcodes.",
-  "main": "de.appwerft.jspdf.js",
+  "main": "ti.jspdf.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,7 +12,7 @@
   },
   "titaniumManifest": {
    "name": "Ti.JSPDF",
-   "moduleid" : "de.appwerft.jspdf",
+   "moduleid" : "ti.jspdf",
    "guid": "30dc3aaa-cd6f-de94-f361-31c199531c90"
   },
   "engines": {

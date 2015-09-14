@@ -3703,9 +3703,3 @@ var Column = function (dataKey) {
 		return this;
 	};
 })(jsPDF.API);
-
-
-
-
-
-

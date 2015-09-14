@@ -82,41 +82,58 @@ doc.addAutoTable({
 ### Example Code ###
 
 ```javascript
-var doc = new _jsPDF();
-doc.setProperties({
-    title : 'Title',
-    subject : 'This is the subject',
-    author : 'John Doe',
-    keywords : 'one, two, three',
-    creator : 'Someone'
-});
-doc.addAutoTable({
-    headers:["ID", "Name", "Country", "Count"], 
-    data : [[1, "Shaw", "Tanzania", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]]
-});
-console.log(doc.autoTableEndPosY());
-doc.addQRCode({
-    qr : {
-        data : 'http://github.com/',
-        ec : 'M'
-    }, 
-    x : 5, 
-    y : 100, 
-    width : 45
-});
+module.exports = function() {
+    var PDF = new (require('de.appwerft.jspdf'))();
+    PDF.setProperties({
+        title : 'Übertitel',
+        subject : 'Betreff',
+        author : 'John Doe',
+        keywords : 'one, two, three',
+        creator : 'Düzgün Jildiz'
+    });
+    PDF.addQRCode({
+        qr : {
+            data : 'Wer das liest ist doof.'
+        },
+        x : 160,
+        y : 10,
+        width : 40
+    });
+    PDF.setFont("Helevetica");
+    PDF.addAutoTable({
+        headers : ["ID", "Name", "Country", "Count"],
+        data : [[1, "Noname", "Ödland", "12345"], [2, "Nelson", "Kazakhstan", "345567"], [3, "Garcia", "Madagascar", "8365734"]],
+        options : {
+            margin : {
+            top : 70,
+            left : 10,
+        },
+        tableWidth : '100%'
+        }
+    });
+    //console.log(PDF.autoTableEndPosY());
+/*
+*/
 
-doc.setDrawColor(0);
-doc.addImage(Ti.Filesystem.resourcesDirectory + 'image1.jpg', 'JPEG', 10, 180, 128, 96);
-doc.setFont("helvetica");
-doc.setFontType("bold");
-doc.setFontSize(24);
-doc.text(20, 170, 'Hello world');
-doc.text(20, 190, 'This is jsPDF with image support\nusing Titanium');
-var timeStampName = new Date().getTime();
-if (_tempFile != null) {
-    _tempFile.deleteFile();
-}
-_tempFile = Ti.Filesystem.getFile(Ti.Filesystem.getTempDirectory(), timeStampName + '.pdf');
-doc.save(_tempFile);
+    PDF.setDrawColor(0);
+    PDF.addImage(Ti.Filesystem.resourcesDirectory + '/assets/image1.jpg', 'JPEG', 100	, 180, 128, 72);
+  	PDF.setFontType("bold");
+    PDF.setFontSize(27);
+    PDF.text( PDF.splitTextToSize('Welch fieser Katzentyp quält da süße Vögel bloß zum Jux?', 110),10, 190);
+    PDF.addPage();
+    PDF.rect(20, 120, 10, 10);
+    // empty square
+    PDF.rect(40, 120, 10, 10, 'F');
+    // filled square
+    PDF.addImage(Ti.Filesystem.resourcesDirectory + '/assets/image2.jpg', 'JPEG', 70, 10, 100, 120);
+    PDF.setFont("helvetica");
+    PDF.setFontType("normal");
+    PDF.setFontSize(24);
+    var timeStampName = 'Angebot_' + Ti.App.Properties.getInt('nr', 0);
+    var _tempFile = Ti.Filesystem.getFile(Ti.Filesystem.getTempDirectory(), timeStampName + '.pdf');
+    PDF.save(_tempFile);
+    return _tempFile;
+};
+
 
 ```

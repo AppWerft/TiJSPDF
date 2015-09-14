@@ -799,11 +799,13 @@ var jsPDF = (function(global) {
 			case 'sans-serif':
 			case 'verdana':
 			case 'arial':
+			case 'helvetica':
 				fontName = 'helvetica';
 				break;
 			case 'fixed':
 			case 'monospace':
 			case 'terminal':
+			case 'courier':
 				fontName = 'courier';
 				break;
 			case 'serif':
@@ -2355,7 +2357,8 @@ var jsPDF = (function(global) {
 
 ;(function(jsPDFAPI) {
 	'use strict';
-	var toBlob = function(jsString) {
+	// in IOS this works, but not with Android
+	var toBlobIOS = function(jsString) {
 			var data = jsString, len = data.length,
 				ab = new ArrayBuffer(len), u8 = new Uint8Array(ab);
 
@@ -2368,6 +2371,17 @@ var jsPDF = (function(global) {
             var idx = 0;
 			while(len--){ 
 				buffer.fill(u8[idx],idx,len);
+				idx++;
+			}
+			return buffer.toBlob();
+		
+	}
+	var toBlob = function(jsString) {
+			var data = jsString, len = data.length;
+            var buffer = Ti.createBuffer({length:len});
+            var idx = 0;
+			while(len--){ 
+				buffer.fill(data.charCodeAt(idx),idx,len);
 				idx++;
 			}
 			return buffer.toBlob();
@@ -3678,7 +3692,6 @@ var Column = function (dataKey) {
 		var qrcode = new qrcodeModule(qroptions.data, qroptions.ecstrategy, qroptions.maskPattern, qroptions.version, qroptions.dataOnly, qroptions.maskTest);
 		var code = qrcode.getData();
 		var R = width / qrcode.getSize();
-		console.log('Info: QR uses raster of ' + R)
 		this.setDrawColor(color);
 		this.setFillColor(color);
 		for (var r = 0; r < code.length; r += 1) {

@@ -32,7 +32,7 @@
     "Appcelerator",
     "AppWerft"
   ],
-  "author": "Rainer Schleevoigt",
+  "author": "Rainer Schleevoigt, Stefan Gross",
   "license": "LGPL-2.1",
   "bugs": {
     "url": "https://github.com/AppWerft/TiJSPDF/issues"
