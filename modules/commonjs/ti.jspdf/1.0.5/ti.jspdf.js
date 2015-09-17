@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g=(g.de||(g.de = {}));g=(g.appwerft||(g.appwerft = {}));g.jspdf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function o(i,u){if(!n[i]){if(!t[i]){var a=typeof require=="function"&&require;if(!u&&a)return a.length===2?a(i,!0):a(i);if(s&&s.length===2)return s(i,!0);if(s)return s(i);var f=new Error("Cannot find module '"+i+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[i]={exports:{}};t[i][0].call(l.exports,function(e){var n=t[i][1][e];return o(n?n:e)},l,l.exports,e,t,n,r)}return n[i].exports}var i=Array.prototype.slice;Function.prototype.bind||Object.defineProperty(Function.prototype,"bind",{enumerable:!1,configurable:!0,writable:!0,value:function(e){function r(){return t.apply(this instanceof r&&e?this:e,n.concat(i.call(arguments)))}if(typeof this!="function")throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");var t=this,n=i.call(arguments,1);return r.prototype=Object.create(t.prototype),r.prototype.contructor=r,r}});var s=typeof require=="function"&&require;for(var u=0;u<r.length;u++)o(r[u]);return o})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.ti || (g.ti = {})).jspdf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function o(i,u){if(!n[i]){if(!t[i]){var a=typeof require=="function"&&require;if(!u&&a)return a.length===2?a(i,!0):a(i);if(s&&s.length===2)return s(i,!0);if(s)return s(i);var f=new Error("Cannot find module '"+i+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[i]={exports:{}};t[i][0].call(l.exports,function(e){var n=t[i][1][e];return o(n?n:e)},l,l.exports,e,t,n,r)}return n[i].exports}var i=Array.prototype.slice;Function.prototype.bind||Object.defineProperty(Function.prototype,"bind",{enumerable:!1,configurable:!0,writable:!0,value:function(e){function r(){return t.apply(this instanceof r&&e?this:e,n.concat(i.call(arguments)))}if(typeof this!="function")throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");var t=this,n=i.call(arguments,1);return r.prototype=Object.create(t.prototype),r.prototype.contructor=r,r}});var s=typeof require=="function"&&require;for(var u=0;u<r.length;u++)o(r[u]);return o})({1:[function(require,module,exports){
 (function (console,setTimeout){
 
 /*
@@ -1061,10 +1061,10 @@ var jsPDF = (function(global) {
 			'scaleFactor' : k,
 			'pageSize' : {
 				get width() {
-					return pageWidth
+					return pageWidth;
 				},
 				get height() {
-					return pageHeight
+					return pageHeight;
 				}
 			},
 			'output' : function(type, options) {
@@ -1248,7 +1248,7 @@ var jsPDF = (function(global) {
 			if (typeof this._runningPageHeight === 'undefined'){
 				this._runningPageHeight = 0;
 			}
-
+			if (!text)  text='';
 			if (typeof text === 'string') {
 				text = ESC(text);
 			} else if (text instanceof Array) {
@@ -1314,16 +1314,7 @@ var jsPDF = (function(global) {
 			// Thus, there is NO useful, *reliable* concept of "default" font for a page.
 			// The fact that "default" (reuse font used before) font worked before in basic cases is an accident
 			// - readers dealing smartly with brokenness of jsPDF's markup.
-           console.log('>>>>>>>>>>');
-            var hex = '';
-            for (var i = 0; i < text.length; i++) {
-                hex += ' ' + text.charCodeAt(i).toString(16);
-            };
-            console.log(': SG ' + text + ' = hex:' + hex);
-            console.log('>>>>>>>>>>');
-
-			var curY;
-
+        	var curY;
 			if (todo){
 				//this.addPage();
 				//this._runningPageHeight += y -  (activeFontSize * 1.7 / k);
@@ -2155,12 +2146,11 @@ var jsPDF = (function(global) {
 				throw new Error('getJpegSize requires a binary jpeg file');
 			}
 			var blockLength = imageBuffer[4]*256 + imageBuffer[5];
-
 			var i = 4, len = imgData.length;
 			while ( i < len ) {
 				i += blockLength;
 				if (imageBuffer[i] !== 255) {
-					throw new Error('getJpegSize could not find the size of the image');
+					throw new Error('getJpegSize could not find the size of the image. This may be because the headers of the JPEG have been removed or the image cannot be found.');
 				}
 				if (imageBuffer[i+1] === 192) {
 					height = imageBuffer[i+5]*256 + imageBuffer[i+6];
@@ -2375,7 +2365,7 @@ var jsPDF = (function(global) {
 			}
 			return buffer.toBlob();
 		
-	}
+	};
 	var toBlob = function(jsString) {
 			var data = jsString, len = data.length;
             var buffer = Ti.createBuffer({length:len});
@@ -2386,7 +2376,7 @@ var jsPDF = (function(global) {
 			}
 			return buffer.toBlob();
 		
-	}
+	};
 	
 	jsPDFAPI.save = function (file) {
 		'use strict';
@@ -2749,7 +2739,7 @@ var jsPDF = (function(global) {
 			kerning = options.kerning ? options.kerning : this.internal.getFont().metadata.Unicode.kerning,
 			kerningFractionOf = kerning.fof ? kerning.fof : 1;
 
-		// console.log("widths, kergnings", widths, kerning)
+		// console.log("widths, kernings", widths, kerning)
 
 		var i,
 			l,
@@ -3134,7 +3124,7 @@ var jsPDF = (function(global) {
 
 		// Page break if there is room for only the first data row
 		var firstRowHeight = table.rows[0] && settings.pageBreak === 'auto' ? table.rows[0].height : 0;
-		var minTableBottomPos = settings.startY + settings.margin.bottom + table.headerRow.height + firstRowHeight;
+		var minTableBottomPos = settings.startY + 	 + table.headerRow.height + firstRowHeight;
 		if (settings.pageBreak === 'avoid') {
 			minTableBottomPos += table.height;
 		}
