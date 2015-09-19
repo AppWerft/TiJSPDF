@@ -16,11 +16,11 @@ https://github.com/someatoms/jsPDF-AutoTable
 
 Version 0.2
 
-[jsPDF libary](http://parall.ax/products/jspdf) 
+[jsPDF libary](http://parall.ax/products/jspdf)
 
 I do not claim to be the author of the jsPDF library, this code simply adds preliminary image support when used with Titanium.
 
-This is a fork of the [Titanium version of Malcom](https://github.com/Core-13/jsPDF-image-support) 
+This is a fork of the [Titanium version of Malcom](https://github.com/Core-13/jsPDF-image-support)
 
 
 ### addImage Method ###
@@ -34,7 +34,7 @@ doc.addImage(filename, format, x, y, w, h, imageWidth, imageHeight, imageSize);
     y (on page)
     width (on page)
     height (on page)
-   
+
 */
 
 ```
@@ -45,9 +45,9 @@ doc.addQRCode({
     qr : {
         data : 'http://github.com/',
         ec : 'M'
-    }, 
-    x : 5, 
-    y : 100, 
+    },
+    x : 5,
+    y : 100,
     width : 45
 });
 
@@ -116,7 +116,7 @@ module.exports = function() {
 */
 
     PDF.setDrawColor(0);
-    PDF.addImage(Ti.Filesystem.resourcesDirectory + '/assets/image1.jpg', 'JPEG', 100	, 180, 128, 72);
+    PDF.addImage(Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,  'assets/image1.jpg').nativePath, 'JPEG', 100	, 180, 128, 72);
   	PDF.setFontType("bold");
     PDF.setFontSize(27);
     PDF.text( PDF.splitTextToSize('Welch fieser Katzentyp quält da süße Vögel bloß zum Jux?', 110),10, 190);
@@ -125,7 +125,7 @@ module.exports = function() {
     // empty square
     PDF.rect(40, 120, 10, 10, 'F');
     // filled square
-    PDF.addImage(Ti.Filesystem.resourcesDirectory + '/assets/image2.jpg', 'JPEG', 70, 10, 100, 120);
+    PDF.addImage(Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, 'assets/image2.jpg').nativePath, 'JPEG', 70, 10, 100, 120);
     PDF.setFont("helvetica");
     PDF.setFontType("normal");
     PDF.setFontSize(24);
