@@ -1,6 +1,6 @@
 {
   "name": "Ti.JSPDF",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "This extended version of JSPDF can show text in WinANSI, embed images, auto tables and qrcodes.",
   "main": "ti.jspdf.js",
   "scripts": {

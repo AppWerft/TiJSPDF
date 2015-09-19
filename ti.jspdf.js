@@ -3430,12 +3430,10 @@ var jsPDF = (function(global) {
 				if (count > lineBreakCount) {  // calc. max of all cells of 1 row
 					lineBreakCount = count;
 				}
-			}); // end of col work (cell)
-			if (cell.styles.overflow === 'linebreak') {
-				row.height = (lineBreakCount+1) * row.styles.fontSize * FONT_ROW_RATIO / doc.internal.scaleFactor;
-			} else {
-				 row.styles.rowHeight;	
-			}
+				row.height = (cell.styles.overflow === 'linebreak') //
+				? (lineBreakCount+1) * row.styles.fontSize * FONT_ROW_RATIO / doc.internal.scaleFactor//
+				: row.styles.rowHeight; 
+			}); 
 			table.height += row.height;
 		}); // end of row work
 	}
