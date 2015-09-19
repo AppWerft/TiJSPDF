@@ -3255,7 +3255,6 @@ var jsPDF = (function(global) {
 				console.error("Use of deprecated option: " + deprecatedOption + ", use the style " + style + " instead.");
 			}
 		});
-
 		// Unifying
 		var marginSetting = settings.margin;
 		settings.margin = {};
@@ -3275,7 +3274,6 @@ var jsPDF = (function(global) {
 				settings.margin[side] = typeof marginSetting[key] === 'number' ? marginSetting[key] : 40;
 			}
 		});
-
 		return settings;
 	}
 
@@ -3433,7 +3431,11 @@ var jsPDF = (function(global) {
 					lineBreakCount = count;
 				}
 			}); // end of col work (cell)
-			row.height = row.styles.rowHeight + (lineBreakCount+1) * row.styles.fontSize * FONT_ROW_RATIO / doc.internal.scaleFactor;
+			if (cell.styles.overflow === 'linebreak') {
+				row.height = (lineBreakCount+1) * row.styles.fontSize * FONT_ROW_RATIO / doc.internal.scaleFactor;
+			} else {
+				 row.styles.rowHeight;	
+			}
 			table.height += row.height;
 		}); // end of row work
 	}
@@ -3676,7 +3678,7 @@ var Column = function (dataKey) {
 		var y= args.y;
 		var qroptions = args.qr;
 		var width = args.width || 100;
-		var PADDING = args.padding || 3;
+		var PADDING = args.padding != undefined || 3;
 		var color = args.color || 0;
 		var qrcodeModule = require('de.appwerft.qrcode');
 		var qrcode = new qrcodeModule(qroptions.data, qroptions.ecstrategy, qroptions.maskPattern, qroptions.version, qroptions.dataOnly, qroptions.maskTest);
