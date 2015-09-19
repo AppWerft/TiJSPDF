@@ -1059,10 +1059,10 @@ var jsPDF = (function(global) {
 			'scaleFactor' : k,
 			'pageSize' : {
 				get width() {
-					return pageWidth
+					return pageWidth;
 				},
 				get height() {
-					return pageHeight
+					return pageHeight;
 				}
 			},
 			'output' : function(type, options) {
@@ -1246,7 +1246,7 @@ var jsPDF = (function(global) {
 			if (typeof this._runningPageHeight === 'undefined'){
 				this._runningPageHeight = 0;
 			}
-
+			if (!text)  text = '';
 			if (typeof text === 'string') {
 				text = ESC(text);
 			} else if (text instanceof Array) {
@@ -1261,7 +1261,7 @@ var jsPDF = (function(global) {
 				if (0 <= linesLeft && linesLeft < da.length + 1) {
 					//todo = da.splice(linesLeft-1);
 				}
-
+				
 				if( align ) {
 					var left,
 						prevX,
@@ -1305,6 +1305,7 @@ var jsPDF = (function(global) {
 			} else {
 				throw new Error('Type of text must be string or Array. "' + text + '" is not recognized.');
 			}
+			
 			// Using "'" ("go next line and render text" mark) would save space but would complicate our rendering code, templates
 
 			// BT .. ET does NOT have default settings for Tf. You must state that explicitely every time for BT .. ET
@@ -1312,16 +1313,7 @@ var jsPDF = (function(global) {
 			// Thus, there is NO useful, *reliable* concept of "default" font for a page.
 			// The fact that "default" (reuse font used before) font worked before in basic cases is an accident
 			// - readers dealing smartly with brokenness of jsPDF's markup.
-           console.log('>>>>>>>>>>');
-            var hex = '';
-            for (var i = 0; i < text.length; i++) {
-                hex += ' ' + text.charCodeAt(i).toString(16);
-            };
-            console.log(': SG ' + text + ' = hex:' + hex);
-            console.log('>>>>>>>>>>');
-
-			var curY;
-
+        	var curY;
 			if (todo){
 				//this.addPage();
 				//this._runningPageHeight += y -  (activeFontSize * 1.7 / k);
@@ -1368,8 +1360,8 @@ var jsPDF = (function(global) {
 		API.clip = function() {
 			// By patrick-roberts, github.com/MrRio/jsPDF/issues/328
 			// Call .clip() after calling .rect() with a style argument of null
-			out('W') // clip
-			out('S') // stroke path; necessary for clip to work
+			out('W'); // clip
+			out('S'); // stroke path; necessary for clip to work
 		};
 
 		/**
@@ -2145,20 +2137,19 @@ var jsPDF = (function(global) {
 				!imageBuffer[1] === 216 ||
 				!imageBuffer[2] === 255 ||
 				!imageBuffer[3] === 224 ||
-				!imageBuffer[6]===  74 || // J
-				!imageBuffer[7]===  70 || // F
-				!imageBuffer[8]===  73 || // I
-				!imageBuffer[9]===  70 || // F
+				!imageBuffer[6] ===  74 || // J
+				!imageBuffer[7] ===  70 || // F
+				!imageBuffer[8] ===  73 || // I
+				!imageBuffer[9] ===  70 || // F
 				!imageBuffer[10]===  0 ) {
 				throw new Error('getJpegSize requires a binary jpeg file');
 			}
 			var blockLength = imageBuffer[4]*256 + imageBuffer[5];
-
 			var i = 4, len = imgData.length;
 			while ( i < len ) {
 				i += blockLength;
 				if (imageBuffer[i] !== 255) {
-					throw new Error('getJpegSize could not find the size of the image');
+					throw new Error('getJpegSize could not find the size of the image. This may be because the headers of the JPEG have been removed or the image cannot be found.');
 				}
 				if (imageBuffer[i+1] === 192) {
 					height = imageBuffer[i+5]*256 + imageBuffer[i+6];
@@ -2373,7 +2364,7 @@ var jsPDF = (function(global) {
 			}
 			return buffer.toBlob();
 		
-	}
+	};
 	var toBlob = function(jsString) {
 			var data = jsString, len = data.length;
             var buffer = Ti.createBuffer({length:len});
@@ -2384,7 +2375,7 @@ var jsPDF = (function(global) {
 			}
 			return buffer.toBlob();
 		
-	}
+	};
 	
 	jsPDFAPI.save = function (file) {
 		'use strict';
@@ -2747,7 +2738,7 @@ var jsPDF = (function(global) {
 			kerning = options.kerning ? options.kerning : this.internal.getFont().metadata.Unicode.kerning,
 			kerningFractionOf = kerning.fof ? kerning.fof : 1;
 
-		// console.log("widths, kergnings", widths, kerning)
+		// console.log("widths, kernings", widths, kerning)
 
 		var i,
 			l,
@@ -3085,7 +3076,7 @@ var jsPDF = (function(global) {
 
 			// Properties
 			startY: false, // false indicates the margin.top value
-			margin: 10,
+			margin: 10, 
 			pageBreak: 'auto', // 'auto', 'avoid', 'always'
 			tableWidth: 'auto', // number, 'auto', 'wrap'
 
@@ -3130,27 +3121,30 @@ var jsPDF = (function(global) {
 		createModels(headers, data);
 		calculateWidths();
 
-		// Page break if there is room for only the first data row
-		var firstRowHeight = table.rows[0] && settings.pageBreak === 'auto' ? table.rows[0].height : 0;
-		var minTableBottomPos = settings.startY + settings.margin.bottom + table.headerRow.height + firstRowHeight;
-		if (settings.pageBreak === 'avoid') {
-			minTableBottomPos += table.height;
-		}
-		if ((settings.pageBreak === 'always' && settings.startY !== false) ||
-			(settings.startY !== false && minTableBottomPos > doc.internal.pageSize.height)) {
-			doc.addPage();
-			cursor.y = settings.margin.top;
-		}
-		applyStyles(userStyles);
-		settings.beforePageContent(hooksData());
-		if (settings.drawHeaderRow(table.headerRow, hooksData({row: table.headerRow})) !== false) {
-			printRow(table.headerRow, settings.drawHeaderCell);
-		}
-		applyStyles(userStyles);
-		printRows();
-		settings.afterPageContent(hooksData());
-		applyStyles(userStyles);
-		return this;
+        // Page break if there is room for only the first data row
+        var firstRowHeight = table.rows[0] && settings.pageBreak === 'auto' ? table.rows[0].height : 0;
+        var minTableBottomPos = settings.startY + settings.margin.bottom + table.headerRow.height + firstRowHeight;
+        if (settings.pageBreak === 'avoid') {
+            minTableBottomPos += table.height;
+        }
+        if ((settings.pageBreak === 'always' && settings.startY !== false) ||
+            (settings.startY !== false && minTableBottomPos > doc.internal.pageSize.height)) {
+            doc.addPage();
+            cursor.y = settings.margin.top;
+        }
+
+        applyStyles(userStyles);
+        settings.beforePageContent(hooksData());
+        if (settings.drawHeaderRow(table.headerRow, hooksData({row: table.headerRow})) !== false) {
+            printRow(table.headerRow, settings.drawHeaderCell);
+        }
+        applyStyles(userStyles);
+        printRows();
+        settings.afterPageContent(hooksData());
+
+        applyStyles(userStyles);
+
+        return this;
 	};
 
 	/**
@@ -3200,36 +3194,31 @@ var jsPDF = (function(global) {
 	 * Inspiration from: http://stackoverflow.com/questions/28327510/align-text-right-using-jspdf/28433113#28433113
 	 */
 	API.autoTableText = function (text, x, y, styles) {
+		if (!styles) styles = {};
+		var doc = this;
 		if (typeof x !== 'number' || typeof y !== 'number') {
 			console.error('The x and y parameters are required. Missing for the text: ', text);
 		}
 		var fontSize = doc.internal.getFontSize() / doc.internal.scaleFactor;
-
 		// As defined in jsPDF source code
 		var lineHeightProportion = FONT_ROW_RATIO;
-
 		var splitRegex = /\r\n|\r|\n/g;
 		var splittedText = null;
 		var lineCount = 1;
 		if (styles.valign === 'middle' || styles.valign === 'bottom' || styles.halign === 'center' || styles.halign === 'right') {
 			splittedText = typeof text === 'string' ? text.split(splitRegex) : text;
-
 			lineCount = splittedText.length || 1;
 		}
-
 		// Align the top
 		y += fontSize * (2 - lineHeightProportion);
-
 		if (styles.valign === 'middle')
 			y -= (lineCount / 2) * fontSize;
 		else if (styles.valign === 'bottom')
 			y -= lineCount * fontSize;
-
 		if (styles.halign === 'center' || styles.halign === 'right') {
 			var alignSize = fontSize;
 			if (styles.halign === 'center')
 				alignSize *= 0.5;
-
 			if (lineCount >= 1) {
 				for (var iLine = 0; iLine < splittedText.length; iLine++) {
 					doc.text(splittedText[iLine], x - doc.getStringUnitWidth(splittedText[iLine]) * alignSize, y);
@@ -3239,7 +3228,6 @@ var jsPDF = (function(global) {
 			}
 			x -= doc.getStringUnitWidth(text) * alignSize;
 		}
-
 		doc.text(text, x, y);
 		return doc;
 	};
@@ -3324,14 +3312,12 @@ var jsPDF = (function(global) {
 			col.styles = {};
 			if (typeof col.styles.columnWidth === 'undefined') col.styles.columnWidth = 'auto';
 			table.columns.push(col);
-
 			var cell = new Cell();
 			cell.raw = typeof rawColumn === 'object' ? rawColumn.title : rawColumn;
 			cell.styles = headerRow.styles;
 			cell.text = '' + cell.raw;
 			cell.contentWidth = cell.styles.cellPadding * 2 + getStringWidth(cell.text, cell.styles);
 			cell.text = cell.text.split(splitRegex);
-
 			headerRow.cells[dataKey] = cell;
 			settings.createdHeaderCell(cell, {column: col, row: headerRow, settings: settings});
 		});
@@ -3377,7 +3363,6 @@ var jsPDF = (function(global) {
 			tableContentWidth += column.contentWidth;
 		});
 		table.contentWidth = tableContentWidth;
-
 		var maxTableWidth = doc.internal.pageSize.width - settings.margin.left - settings.margin.right;
 		var preferredTableWidth = maxTableWidth; // settings.tableWidth === 'auto'
 		if (typeof settings.tableWidth === 'number') {
@@ -3386,7 +3371,6 @@ var jsPDF = (function(global) {
 			preferredTableWidth = table.contentWidth;
 		}
 		table.width = preferredTableWidth < maxTableWidth ? preferredTableWidth : maxTableWidth;
-
 		// To avoid subjecting columns with little content with the chosen overflow method,
 		// never shrink a column more than the table divided by column count (its "fair part")
 		var dynamicColumns = [];
@@ -3418,13 +3402,21 @@ var jsPDF = (function(global) {
 		var all = table.rows.concat(table.headerRow);
 		all.forEach(function (row, i) {
 			var lineBreakCount = 0;
-			table.columns.forEach(function (col) {
+			table.columns.forEach(function (col,i) {
 				var cell = row.cells[col.dataKey];
 				applyStyles(cell.styles);
 				var textSpace = col.width - cell.styles.cellPadding * 2;
 				if (cell.styles.overflow === 'linebreak') {
-					// Add one pt to textSpace to fix rounding error
-					cell.text = doc.splitTextToSize(cell.text, textSpace + 1, {fontSize: cell.styles.fontSize});
+					if (!Array.isArray(cell.text)) cell.text = [cell.text];	
+						var templines = [];
+						cell.text.forEach(function(line){
+							// Add one pt to textSpace to fix rounding error
+							var splittedlines = doc.splitTextToSize(line, textSpace + 1, {fontSize: cell.styles.fontSize});
+							splittedlines.forEach(function(l){
+								templines.push(l);
+							}); 
+						});
+						cell.text = templines;
 				} else if (cell.styles.overflow === 'ellipsize') {
 					cell.text = ellipsize(cell.text, textSpace, cell.styles);
 				} else if (cell.styles.overflow === 'visible') {
@@ -3436,14 +3428,14 @@ var jsPDF = (function(global) {
 				} else {
 					console.error("Unrecognized overflow type: " + cell.styles.overflow);
 				}
-				var count = Array.isArray(cell.text) ? cell.text.length - 1 : 0;
-				if (count > lineBreakCount) {
+				var count = Array.isArray(cell.text) ? cell.text.length - 1 : 0; // of this cell
+				if (count > lineBreakCount) {  // calc. max of all cells of 1 row
 					lineBreakCount = count;
 				}
-			});
-			row.height = row.styles.rowHeight + lineBreakCount * row.styles.fontSize * FONT_ROW_RATIO;
+			}); // end of col work (cell)
+			row.height = row.styles.rowHeight + (lineBreakCount+1) * row.styles.fontSize * FONT_ROW_RATIO / doc.internal.scaleFactor;
 			table.height += row.height;
-		});
+		}); // end of row work
 	}
 
 	function distributeWidth(dynamicColumns, staticWidth, dynamicColumnsContentWidth, fairWidth) {
@@ -3695,7 +3687,7 @@ var Column = function (dataKey) {
 		for (var r = 0; r < code.length; r += 1) {
 			for (var c = 0; c < code[r].length; c += 1) {
 				if (code[r][c] === 1) {
-					/*5% more size to cover the border of rect. */
+					// 5% more size to cover the border of rect. 
 					this.rect(PADDING + x + r * R, PADDING + y + c * R, R * 1.05, R * 1.05, 'F');
 				}
 			}
@@ -3703,3 +3695,9 @@ var Column = function (dataKey) {
 		return this;
 	};
 })(jsPDF.API);
+
+
+
+
+
+
