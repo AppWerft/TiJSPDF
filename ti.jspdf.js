@@ -270,6 +270,9 @@ var jsPDF = (function(global) {
 		newObjectDeferredBegin = function(oid) {
 			offsets[oid] = content_length;
 		},
+		incrContentLength = function(size) { // a stream is just a chunk of binary data
+			content_length += size;
+		},
 		putStream = function(str) { // a stream is just a chunk of binary data
 			out('stream');
 			out(str);
@@ -882,7 +885,7 @@ var jsPDF = (function(global) {
 			out('>>');
 			out('startxref');
 			out(o);
-			out('%%EOF');
+			out('%%EOF ');
 
 			outToPages = true;
 
@@ -1081,6 +1084,12 @@ var jsPDF = (function(global) {
 			'getCurrentPageInfo' : function(){
 				var objId = (currentPage - 1) * 2 + 3;
 				return {objId:objId, pageNumber:currentPage, pageContext:pagesContext[currentPage]};
+			},
+			'incrContentLength': function(increment){
+				return incrContentLength(increment);
+			},
+			'contentLength' : function() {
+				return content_length;
 			}
 		};
 
@@ -2200,12 +2209,21 @@ var jsPDF = (function(global) {
 			if ('smask' in img) {
 				out('/SMask ' + (objectNumber + 1) + ' 0 R');
 			}
-			out('/Length ' + img['fileSize'] + '>>');
+			
+			out('/Length ' + img['fileSize'] + '\n>>');
 
             // Here we write just something like #image filePath# used as Image marker 
             // to be replaced by content later on during save
-			putStream('#image ' + img['data'] + '#');
-
+            var imgPlaceholder = "#image " + img['data'] + '#';
+            
+            // We do not use the putStream here, cause we have to insert a newline after stream for images
+            out('stream\n');
+			out(imgPlaceholder);
+			out('endstream');
+			
+			// adjust content_length, so xref contains correct offsets (we need the image file length, not the placeholder length)
+			var contentLengthAdjustment = img['fileSize'] - imgPlaceholder.length - 1 ;
+            this.internal.incrContentLength(contentLengthAdjustment);
 			out('endobj');
 		}
 		, putResourcesCallback = function() {
@@ -2346,35 +2364,16 @@ var jsPDF = (function(global) {
 
 ;(function(jsPDFAPI) {
 	'use strict';
-	// in IOS this works, but not with Android
-	var toBlobIOS = function(jsString) {
-			var data = jsString, len = data.length,
-				ab = new ArrayBuffer(len), u8 = new Uint8Array(ab);
-
-            len = data.length;
-            var buffer = Ti.createBuffer({length:len});
-			while(len--){ 
-				u8[len] = data.charCodeAt(len);
-			}
-            len = data.length;
-            var idx = 0;
-			while(len--){ 
-				buffer.fill(u8[idx],idx,len);
-				idx++;
-			}
-			return buffer.toBlob();
-		
-	};
 	var toBlob = function(jsString) {
-			var data = jsString, len = data.length;
+			var data = jsString;
+			var len = (data.length - 1);  // for some reasons the string is null terminated, we do not want to write out the last byte
             var buffer = Ti.createBuffer({length:len});
             var idx = 0;
 			while(len--){ 
-				buffer.fill(data.charCodeAt(idx),idx,len);
+				buffer.fill(data.charCodeAt(idx),idx,1);
 				idx++;
 			}
 			return buffer.toBlob();
-		
 	};
 	
 	jsPDFAPI.save = function (file) {
@@ -2392,14 +2391,11 @@ var jsPDF = (function(global) {
             case true:
                 // convert to Ti.Blob to avoid character encoding problems
                 // Titanium otherwise will translate to UCS2 encoding but we need to keep WinAnsi!
-                //console.log("Writing chunk " + intNode)
                 var pdfChunk = toBlob(parts[intNode]);
                 file.write(pdfChunk,true);
-                file.write("\n",true); // we have to append a newline here to have valid stream start for images!
                 break;
             case false:
                 // write file content of image file
-                //console.log("Writing image "  + parts[intNode]);
                 imgFile = Ti.Filesystem.getFile(parts[intNode]);
                 if(imgFile.exists()){
                 	file.write(imgFile.read(),true);              	
